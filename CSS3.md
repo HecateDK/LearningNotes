@@ -11,6 +11,7 @@ CSS3已经分成了很多个模块而不是一份单独、完整的CSS3规范文
 * 动画
 * 布局
 * 渐变/透明
+<br>
 使用CSS3之前，页面需要添加一行代码: <br>
 ```HTML
 <name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">   
@@ -66,14 +67,14 @@ li { float:left; }
 2）像素比  <br>
 在小屏幕上访问网站，通常需要放大显示，导致屏幕像素大于CSS像素，这对于位图格式图片，放大时会导致严重失真，现在很多手机使用更高像素密度比的屏幕，能够以高分辨率显示而没有任何失真。 <br>
 媒体特征可以根据设备的像素密度去判断设备——device-pixel-ratio（在mobile webkit中带有前缀-webkit-） <br>
-``CSS
+```CSS
 /* 屏幕在标准（或是低分辨率）像素比设备的浏览器上将使用标准图片，像素比至少在1.5的设备则使用高分辨率的图片 */
 E { background-image:url('lores.png'); }
 @media screen and (-webkit-min-device-pixel-ratio:1.5){ 
   background-image:url('hires.png');
   background-size:100% 100%;
 }
-``
+```
 3） 多种媒体特性 <br>
 and操作符添加样式，可以把多条查询链接在同一个媒体类型上，这种语法在应用选定规则之前，会先检测两个表达式是否匹配： <br>
 ```CSS
@@ -377,14 +378,14 @@ text-align直接设为justify就行了，而text-justify的取值有几种可能
                 }
             }
 ```
-运行效果是： ![./views/text-align.png]()
+运行效果是： ![](./views/text-align.png)
 
 ###### 文本换行
 word-wrap:指定了浏览器是否可以把长单句折断，使其容纳在父元素中。值为normal表示指定文本行只能在两个单词之间折断（除非在标记中另有指定）；值为break-word表示允许单词在需要防止溢出父元素的时候折断。
 white-space：声明建立布局过程中如何处理元素中的空白符。可能的值有：
 * normal:默认，忽略空白符，忽略原有换行符。自动换行，不会有滚动条
 * pre:保留空白符；保留换行符，即保留原有格式
-* nowrap:忽略空白符，文本不换行，直到遇到</br>；
+* nowrap:忽略空白符，文本不换行，直到遇到
 * pre-wrap:保留空白符，自动进行换行，不会有滚动条
 * pre-line:合并空白符，保留换行符；
 word-break:break-all和word-wrap:break-word都是能使其容器如DIV的内容自动换行。 <br>
@@ -394,6 +395,155 @@ word-break:break-all和word-wrap:break-word都是能使其容器如DIV的内容�
 ######  应用标点属性
 有时候我们喜欢把标点固定到文本块的页边空白处，此时就需要在text-indent上设置一个负值。  <br>
 text-indent 属性规定文本块中首行文本的缩进,如果使用负值，那么首行会被缩进到左边.。
+
+
+#### 5、2D变换
+CSS3 的 transform 属性允许我们移动、旋转、缩放和倾斜元素,可同时对一个元素进行变形的多种属性操作，在多个变形函数使用时需要用空格隔开。。它的基本语法是： <br>
+```CSS
+E { transform: none|function(value); }    
+```
+![](./views/transform.png)
+##### 旋转
+在上面的所有这些函数中，rotate可能就是最简单的函数了，它会让元素围绕一个固定的点进行旋转，允许负值，元素将逆时针旋转。 <br>
+文档一旦经过变换，看起来就像把position:relative应用到它上面一样，也就是说该元素相当于两个元素一样。原始的、转换前的元素会保持在文档流中的位置，所以后续的所有元素都会受到它以及它的margin和padding的影响。经过变换后的元素并不影响页面的布局，但它会位于页面剩余部分之上的一个新层中，意味着这个新的元素可以覆盖后续的元素。
+```HTML
+<div>你好。这是一个 div 元素。</div>
+<div id="div2">你好。这是一个 div 元素。</div>
+```
+```css
+div#div2
+{
+transform:rotate(30deg);         /* 值 rotate(30deg) 把元素顺时针旋转 30 度 */
+-ms-transform:rotate(30deg); /* IE 9 */
+-moz-transform:rotate(30deg); /* Firefox */
+-webkit-transform:rotate(30deg); /* Safari and Chrome */
+-o-transform:rotate(30deg); /* Opera */
+}
+```
+###### transform-origin
+该属性用来指定元素的中心点位置，默认变形原点在元素中心，即X轴和Y轴的50%处。  <br>
+![](./views/transform-origin.png)
+##### 平移
+控制平移的函数是 translate()，该函数将元素从它的默认位置进行平移。在 2D 变换模块它包含了下列两个独立函数：
+```CSS
+E { transform: translate(X, Y); }         
+```
+此属性可以实现垂直水平居中：
+```CSS
+.center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%,-50%);
+        -ms-transform: translate(-50%,-50%);
+        -moz-transform: translate(-50%,-50%);
+        -o-transform: translate(-50%,-50%);
+        transform: translate(-50%,-50%); 
+    }
+```
+	translate() 函数的表现颇像相对定位 position: relative; 中的 left top 属性，但是二者还是有区别的，经过变换的元素会保留它的位置，只是从显示上看起来向被移动过，被变换的是元素的图像，而不是元素本身。 <br>
+##### 倾斜
+通过 skew() 方法，元素翻转给定的角度，根据给定的水平线（X 轴）和垂直线（Y 轴）参数：
+```HTML
+<div>你好。这是一个 div 元素。</div>
+<div id="div2">你好。这是一个 div 元素。</div>
+```
+```css
+div
+{
+width:100px;
+height:75px;
+background-color:yellow;
+border:1px solid black;
+}
+div#div2
+{
+transform:skew(30deg,20deg);       /* 值 skew(30deg,20deg) 围绕 X 轴把元素翻转 30 度，围绕 Y 轴翻转 20 度 */
+-ms-transform:skew(30deg,20deg); /* IE 9 */
+-moz-transform:skew(30deg,20deg); /* Firefox */
+-webkit-transform:skew(30deg,20deg); /* Safari and Chrome */
+-o-transform:skew(30deg,20deg); /* Opera */
+}
+```
+skew() 函数使用的是角度值，也可以使用负值，而函数的简写形式可以使用一个或两个值。如果使用一个值，第二个值 skewY 会默认为 0。 <br>
+如果是沿着 x轴 倾斜，那么就是元素的水平边依然保持水平，而竖直边则按照度数倾斜旋转；如果是沿着 y轴 倾斜，那么就是元素的竖直边依然保持竖直状态，但是水平边则按照度数倾斜旋转。
+##### 缩放
+通过 scale() 方法，元素的尺寸会增加或减少，根据给定的宽度（X 轴）和高度（Y 轴）参数：
+```css
+div
+{
+width:100px;
+height:75px;
+background-color:yellow;
+border:1px solid black;
+}
+div#div2
+{
+margin:100px;
+transform:scale(2,4);               /* 值 scale(2,4) 把宽度转换为原始尺寸的 2 倍，把高度转换为原始高度的 4 倍 */
+-ms-transform:scale(2,4); /* IE 9 */
+-moz-transform:scale(2,4); /* Firefox */
+-webkit-transform:scale(2,4); /* Safari and Chrome */
+-o-transform:scale(2,4); /* Opera */
+}
+```
+scale()还可以使用负值，使用负值的效果就是垂直的翻转元素，创建原来元素的映射。
+###### 多重变换
+把transform属性中用空格隔开列出多个函数，就可以在一个单独的元素上应用多重变换。
+```CSS
+h2{ transform : rotate(-40deg) scale(0.75) translate(-46%,-400%); }  /* 旋转、缩放并平移一个元素 */
+```
+###### 使用矩阵变换元素
+matrix() 方法把所有 2D 转换方法组合在一起。matrix() 方法需要六个参数，包含数学函数，允许您：旋转、缩放、移动以及倾斜元素。
+```css
+div{           /* 将 div 元素旋转 30 度 */
+transform:matrix(0.866,0.5,-0.5,0.866,0,0);
+-ms-transform:matrix(0.866,0.5,-0.5,0.866,0,0); /* IE 9 */
+-moz-transform:matrix(0.866,0.5,-0.5,0.866,0,0); /* Firefox */
+-webkit-transform:matrix(0.866,0.5,-0.5,0.866,0,0); /* Safari and Chrome */
+-o-transform:matrix(0.866,0.5,-0.5,0.866,0,0); /* Opera */
+}
+```
+更深入具体介绍matrix()方法可以 [点击这里](http://www.zhangxinxu.com/wordpress/?p=2427)
+####### 使用webkit反射
+“Web2.0”的一种常见的设计手法就是反射的图片——即让一张图片看上去似乎在光滑的表面上出现了反射。 <br>
+CSS3中的-webkit-box-reflect即可实现这一效果，语法为：
+```css
+E{ -webkit-box-reflect:direction offset mask-box-image; }
+/* 
+	direction:方位,可以是下面4个值中的1个，above,below,left,right，分别表示上下左右。如果不是使用类似inherit等全局关键字，则此方位值是不能缺省的。
+	offset:偏移大小，倒影和原始元素偏移距离。可以是数值，也可以是百分比值。如果是百分比值，则百分比大小是相对于元素自身尺寸计算的。和transform中translate的百分比计算是一致的。
+	mask-box-image:对元素倒影的遮罩控制。语法类似于background-image。
+*/
+```
+更深入具体介绍-webkit-box-reflect()方法可以 [点击这里](http://www.zhangxinxu.com/wordpress/?p=5599) <br>
+也有另一种参数写法：
+```css
+E:{ -webkit-box-reflect:direction offset source slice repeat; } 
+/* 就像border-image，source是图片文件url，slice是可选的一系列长度值，用于定义图片要使用的区域。 */
+```
+例子：
+```css
+/* 使用透明到白色的渐变垂直地填充，产生了一种光滑的反射效果 */
+h2.transform-1{ -webkit-box-reflect:below 0 -webkit-gradient(linear,50%,0,50%,100%,from(transparent),to(white)); }
+/* 使用图片clound.png在反射上产生遮罩的作用 */
+h2.transform-2{ -webkit-box-reflect:url('clound.png'); }
+```
+注意：反射和其他变换效果行为是一样的：它并没有占据页面布局流的位置，而是位于主体内容之上的层，因此会覆盖在后面的元素上。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
