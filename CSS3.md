@@ -107,24 +107,88 @@ a[href* = '.pdf']{ background-image:url('pdf.png'); }
 a[href^ = 'http://'][href* = '/folder2/'][href$ = '.pdf']{}
 ```
 ##### 2）普通兄弟连结符
+```CSS
 E + F {}  /* 相连兄弟连结符——文档树中的同一层级中，紧邻在元素E之后的任意元素F */
 E ~ F {}  /* 普通兄弟连结符——文档树中的同一层级中，位于元素E之后的任意元素F */
+```
 
 ##### 3）伪类
 ###### 结构伪类
-···CSS
+```CSS
 E:nth-*(even) {}        /* 相当于E:nth-*(2n){} 代表2的每一个倍数（2/4/6/8、、、、） */
 E:nth-*(odd) {}         /* 相当于E:nth-*(2n+1){} 代表2的每一个倍数（1/3/5/7、、、、） */
-E:nth-chile(n) {}       /*  */      
-E:nth-of-type(n) {}
+E:nth-child(n) {}       /* 相当于 E:nth-of-type(n){} 简单地选择了属于类型E的所有子元素  */      
+E:nth-child(2n) {}      /* 选择了类型E中所有处于偶数位的元素，计数的时候包括各种类型的兄弟元素 */
+E:nth-of-type(2n) {}    /* 选择了E类型中所有处于偶数位的元素，但是在计数的时候只包含那些同类型的元素 */
+E:nth-last-child(n){}   /* 选择器匹配属于其元素的第 N 个子元素的每个元素，不论元素的类型，从最后一个子元素开始计数 */
+E:nth-last-of-type(n){} /* 选择器匹配属于父元素的特定类型的第 N 个子元素的每个元素，从最后一个子元素开始计数 */
+E:first-of-type{}       /* 选择器匹配属于其父元素的特定类型的首个子元素的每个元素   p:first-of-type等同于p:nth-of-type(1)*/
+E:last-child{}          /* 选择器匹配属于其父元素的最后一个子元素的每个元素  p:last-child等同于p:nth-last-child(1) */
+E:last-of-type{}        /* 选择器匹配属于其父元素的特定类型的最后一个子元素的每个元素   p:last-of-type等同于p:nth-last-of-type(1) */
+E:only-child{}          /* 选择器匹配属于其父元素的唯一子元素的每个元素 */
+E:only-of-type{}        /* 选择器匹配属于其父元素的特定类型的唯一子元素的每个元素 */
 ```
 
+##### 4)其他伪类
+###### target伪类
+target伪类是用来匹配文档(页面)的URI中某个标志符的目标元素。具体来说，URI中的标志符通常会包含一个”#”字符，然后后面带有一个标志符名称，比如#respond，target就是用来匹配ID为respond的元素的。 <br>
+target伪类的出现让我们可以用纯CSS实现tab切换效果，例如：  <br>
+```HTML
+<div class="tablist">
+    <ul class="tabmenu">
+        <li><a href="#tab1">tab1</a></li>
+        <li><a href="#tab2">tab2</a></li>
+        <li><a href="#tab3">tab3</a></li>
+    </ul>
+    <div id="tab1" class="tab_content">tab1</div>
+    <div id="tab2" class="tab_content">tab2tab2</div>
+    <div id="tab3" class="tab_content">tab3tab3tab3</div>
+</div>
+```
+```CSS
+#tab1:target, #tab2:target, #tab3:target {     /* 先根据target的特性锚链接到对应的div,再根据z-index的属性，改变div的层级关系，从而实现tab的切换效果 */
+        z-index: 1;
+}  
+```
+###### empty伪类
+E:empty伪类选择器匹配没有任何子元素（包括text节点）的元素
+```HTML
+<p><strong>有内容</strong></p>
+<div class="box">有内容</div>
+<p><strong>无内容淡色背景</strong></p>
+<div class="box"></div>
+<p><strong>空格也算内容</strong></p>
+<div class="box"> </div>
+<p><strong>伪元素不算内容</strong></p>
+<div class="box pseudo"></div>
+```
+```css
+.box { width: 256px; height: 90px; padding: 10px; background-color: #cd0000; color: #fff; }
+.box:empty { opacity: .1; }
+.pseudo::after { content: '伪元素生成内容'; }
+```
+###### root伪类
+root伪类选择文档树中的第一个元素， 它唯一真正的作用就是发生在XML文档添加样式表的时候。同时它在HTML中使用root也有一个小作用——为html元素赋予特殊度，在需要覆盖简单类型选择器的时候很有用。
+###### not伪类
+否定选择器“:not”主要用于定位不匹配该选择器的元素。在统一设置元素样式时过滤不需要的元素。其最大的作用是在统一设置某个元素样式时可以排除部分特定的元素，简化CSS样式代码。
+```css
+p{ font-style:italic; }
+p:first-child{ font-style:normal; }
+/* :not伪类可以把上诉两行代码简化成下面一行代码 */
+p:not(:first-child){ font-style:italic; }     /* 传入not伪类的参数必须是一个简单的选择器，连结符（如+和>）以及伪类元素都是没效的 */
+```
+###### UI元素状态伪类
+这种伪类的特点是指定的样式只有当元素处于某种状态时才起作用，在默认状态下不起作用。具体有：
+```CSS
+E:hover | E:active | E:focus | E:enable | E:disable
+E:read-only | E:read-write | E:checked | E:default
+E:indeterminate | E::selection | E:valid | E:invalid
+E:required | E:optional | E:in-range
+```
+详细介绍可参考 [CSS3--UI元素状态伪类选择器](http://www.jianshu.com/p/69371a97d142)
 
-
-
-
-
-
+##### 5)伪元素
+很多时候我会把伪类和伪元素搞混，
 
 
 
