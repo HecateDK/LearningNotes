@@ -189,12 +189,101 @@ E:required | E:optional | E:in-range
 
 ##### 5)伪元素
 很多时候我会把伪类和伪元素搞混，伪元素提供的也是在文档树中没有具体指明的信息，伪类利用的是一些“虚幻”的条件，比如元素在文档中的位置或元素的状态，伪元素则走得更远，它可以把样式应用到文档树中根本就不存在的元素上。 <br>
-![](./views/01.png)    ![](./views/02.png)
+伪类用于当已有元素处于的某个状态时，为其添加对应的样式，这个状态是根据用户行为而动态变化的。比如说，当用户悬停在指定的元素时，我们可以通过:hover来描述这个元素的状态。虽然它和普通的css类相似，可以为已有的元素添加样式，但是它只有处于dom树无法描述的状态下才能为元素添加样式，所以将其称为伪类。 <br>
+伪元素用于创建一些不在文档树中的元素，并为其添加样式。比如说，我们可以通过:before来在一个元素前增加一些文本，并为这些文本添加样式。虽然用户可以看到这些文本，但是这些文本实际上不在文档树中。 <br>
+![](./views/01.png)    ![](./views/02.png) <br>
+虽然CSS3标准要求伪元素使用双冒号的写法，但也依然支持单冒号的写法。
+```CSS
+E::before{}       /* :before在被选元素前插入内容。需要使用content属性来指定要插入的内容。被插入的内容实际上不在文档树中。 */      
+E::after{}        /* :after在被元素后插入内容，其用法和特性与:before相似。 */
+E::first{}        /* :first-letter匹配元素中文本的首字母。被修饰的首字母不在文档树中。 */
+E::first-line{}   /* first-line匹配元素中第一行的文本。这个伪元素只能用在块元素中，不能用在内联元素中 */
+E::selection{}    /* ::selection匹配用户被用户选中或者处于高亮状态的部分。在火狐浏览器使用时需要添加-moz前缀。该伪元素只支持双冒号的形式。 */
+E:::placeholder{} /* ::placeholder匹配占位符的文本，只有元素设置了placeholder属性时，该伪元素才能生效。并且该伪元素不是CSS的标准，将来可能会改善，所以使用时需谨慎 */
+E::backdrop{}     /* ::backdrop用于改变全屏模式下的背景颜色，全屏模式的默认颜色为黑色。该伪元素只支持双冒号的形式,并且处于试验阶段 */
+```
 
-
-
-
-
+#### 4、字体文本效果
+##### 1）@font-face——把自己定义的Web字体嵌入到网页
+要在页面上显示网页（或者非系统）字体，需要使用@font-face规则——该规则对字体进行了定义，并且为浏览器提供了文件的使用位置，基本语法如下: <br>
+```CSS
+@font-face {
+      font-family: <YourWebFontName>;    /* font-family指的就是你自定义的字体名称，最好是使用下载的默认字体，它将被引用到Web元素中的font-family。 */
+      src: <source> [<format>][,<source> [<format>]]*;   /* source:自定义的字体的存放路径，可以是相对路径也可以是绝路径;format:自定义的字体的格式，主要用来帮助浏览器识别，其值主要有以下几种类型：truetype,opentype,truetype-aat,embedded-opentype,avg等； */
+      [font-weight: <weight>];  
+      [font-style: <style>];
+    }
+```
+为了让更多的浏览器支持，可以用以下代码模板： <br>
+```CSS
+@font-face {
+	font-family: 'YourWebFontName';
+	src: url('YourWebFontName.eot'); /* IE9 Compat Modes */
+	src: url('YourWebFontName.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+             url('YourWebFontName.woff') format('woff'), /* Modern Browsers */
+             url('YourWebFontName.ttf')  format('truetype'), /* Safari, Android, iOS */
+             url('YourWebFontName.svg#YourWebFontName') format('svg'); /* Legacy iOS */
+   }
+```
+但是问题是特殊字体我要怎样才能得到，那些.eot,.woff,.ttf,.svg这些字体格式又怎么获取呢？  <br>
+###### 获取字体
+途径一是找到付费网站购买字体，二就是到免费网站DownLoad字体，这里推荐[Google Web Fonts](https://fonts.google.com/)和[Dafont.com](http://www.dafont.com/)download免费字体，下载到电脑后解压即可。
+###### 获取@font-face所需字体格式
+获得@font-face所需的.eot,.woff,.ttf,.svg字体格式需要第三方工具,推荐 [fontsquirrel](https://www.fontsquirrel.com/tools/webfont-generator)，操作一遍基本上就会了，解压出来的字体格式就是@font-face所需字体格式了。
+###### 使用
+在项目文件夹下面可以新建一个fonts文件夹，存放@font-face字体格式，然后再common.css中引入以下css代码：
+```CSS
+@font-face {
+      font-family: 'SingleMaltaRegular';
+      src: url('../fonts/singlemalta-webfont.eot');
+      src: url('../fonts/singlemalta-webfont.eot?#iefix') format('embedded-opentype'),
+           url('../fonts/singlemalta-webfont.woff') format('woff'),
+	   url('../fonts/singlemalta-webfont.ttf') format('truetype'),
+	   url('../fonts/singlemalta-webfont.svg#SingleMaltaRegular') format('svg');
+      font-weight: normal;
+      font-style: normal;
+   }
+```
+现在已经通过@font-face自定义好所需的SingleMalta字体，只需要把自己定义的字体应用到你的Web中的DOM元素上就可以了： 
+```css
+p.singleMalta {
+     font-family: 'SingleMaltaRegular'
+   }
+```
+##### 2）文本效果
+###### 应用空间效果text-shadow
+以前没有text-shadow出现的时候，网页上的阴影效果很多都是通过photoshop实现的，现在可以直接使用text-shadow属性来指定阴影。这个属性可以有两个作用，产生阴影和模糊主体。这样在不使用图片时能给文字增加质感。 <br>
+```CSS
+text-shadow: X-Offset Y-Offset Blur Color;   
+/* 
+     X-Offset表示阴影的水平偏移距离，其值为正值时阴影向右偏移，如果其值为负值时，阴影向左偏移;
+     Y-Offset是指阴影的垂直偏移距离，如果其值是正值时，阴影向下偏移反之其值是负值时阴影向顶部偏移;
+     Blur是指阴影的模糊程度，其值不能是负值，如果值越大，阴影越模糊，反之阴影越清晰，如果不需要阴影模糊可以将Blur值设置为0；
+     Color是指阴影的颜色，可使用rgba色
+*/
+```
+text-shadow并不局限于单一阴影，它的语法为文本节点添加多重阴影，只需要为该属性提供几个附加的值，使用逗号隔开进行分隔,阴影就会按提供的值的顺序被应用。例如：  <br>
+```CSS
+.demo {
+      background: #666666;
+      width: 440px;
+      padding: 30px;
+      font: bold 55px/100% "微软雅黑", "Lucida Grande", "Lucida Sans", Helvetica, Arial, Sans;;
+      color: #fff;
+      text-transform: uppercase;
+  }
+.demo1 {
+  color: #fff;
+  text-shadow: 1px 1px rgba(197, 223, 248,0.8),
+               2px 2px rgba(197, 223, 248,0.8),
+               3px 3px rgba(197, 223, 248,0.8),
+               4px 4px rgba(197, 223, 248,0.8),
+               5px 5px rgba(197, 223, 248,0.8),
+               6px 6px rgba(197, 223, 248,0.8);
+}
+```
+![](./views/textshadow10.png)
+###### 让文本变得更清晰：text-outline 和 text-stroke
 
 
 
