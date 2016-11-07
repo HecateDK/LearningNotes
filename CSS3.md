@@ -284,13 +284,116 @@ text-shadow并不局限于单一阴影，它的语法为文本节点添加多重
 ```
 ![](./views/textshadow10.png)
 ###### 让文本变得更清晰：text-outline 和 text-stroke
+CSS3提供了text-outline来更好地控制轮廓:text-outline和 text-stroke
+```CSS
+E { text-outline:thickness  blur-radius color; }   
+/* 
+	thickness：轮廓的粗细
+	blur-radius：轮廓的模糊半径
+	color：轮廓的颜色
+*/
+```
+但是所有主流的浏览器都不支持text-outline，但webkit浏览器提供了类似的东西——text-stroke
+```CSS
+E{
+	-webkit-text-fill-color:color;
+	-webkit-text-stroke-color:color;
+	-webkit-text-stroke-width:length;
+	-webkit-text-stroke:stroke-width stroke-color;    /* 简写属性，宽度和颜色 */
+}
+```
+###### 限制溢出
+CSS3 提供了 text-overflow 属性来控制文本的溢出部分，它的作用是对溢出的部分裁剪掉，然后判定是否添加省略号。text-overflow的默认值是clip，裁剪文本时不添加“...”省略号；值为ellipsis时，表示裁剪文本时添加“...”省略号；值为string时，表示使用给定的字符串来代表被修剪的文本。
+```HTML
+<p>如果您把光标移动到下面两个 div 上，就能够看到全部文本。</p>
+<p>这个 div 使用 "text-overflow:ellipsis" ：</p>
+<div class="test" style="text-overflow:ellipsis;">This is some long text that will not fit in the box</div>
+<p>这个 div 使用 "text-overflow:clip"：</p>
+<div class="test" style="text-overflow:clip;">This is some long text that will not fit in the box</div>
+```
+```CSS
+div.test
+{
+white-space:nowrap; 
+width:12em; 
+overflow:hidden; 
+border:1px solid #000000;
+}
 
+div.test:hover
+{
+text-overflow:inherit;
+overflow:visible;
+}
+```
+###### 改变元素大小
+resize 属性规定是否可由用户调整元素的尺寸,如果希望此属性生效，需要设置元素的 overflow 属性，值可以是 auto、hidden 或 scroll.
+```CSS
+resize: none|both|horizontal|vertical;
+/* 
+	none:用户无法调整元素的尺寸
+	both:用户可调整元素的高度和宽度
+	horizontal:用户可调整元素的宽度
+	vertical:用户可调整元素的高度
+*/
+```
+###### 文本对齐
+在做表单时我们经常遇到让上下两个字段对齐的情况，比如姓名， 手机号码， 出生地。这样我们就要用到 text-align， text-justify样式了。 <br>
+text-align直接设为justify就行了，而text-justify的取值有几种可能： <br>
+* auto :允许浏览器用户代理确定使用的两端对齐法则
+* inter-word :通过增加字之间的空格对齐文本。该行为是对齐所有文本行最快的方法。它的两端对齐行为对段落的最后一行无效
+* newspaper : 通过增加或减少字或字母之间的空格对齐文本。是用于拉丁文字母表两端对齐的最精确格式
+* distribute :处理空格很像newspaper，适用于东亚文档。尤其是泰国
+* distribute-all-lines :两端对齐行的方式与distribute相同，也同样不包含两段对齐段落的最后一行。适用于表意字文档
+* inter-ideograph : 为表意字文本提供完全两端对齐。他增加或减少表意字和词间的空格
+```HTML
+	<div class="box1">
+            <div class="test1">姓 名</div>
+            <div class="test1">姓 名 姓 名</div>
+            <div class="test1">姓 名 名</div>
+            <div class="test1">所 在 地</div>
+            <div class="test1">工 作 单 位</div>
+        </div>
+```
+```css
+	.box1{
+                background:red;
+                width:30%;
+            }
+            .test1 {
+                text-align:justify;
+                text-justify:distribute-all-lines;/*ie6-8*/
+                text-align-last:justify;/* ie9*/
+                -moz-text-align-last:justify;/*ff*/
+                -webkit-text-align-last:justify;/*chrome 20+*/
+            }
+            @media screen and (-webkit-min-device-pixel-ratio:0){/* chrome*/
+                .test1:after{
+                    content:".";
+                    display: inline-block;
+                    width:100%;
+                    overflow:hidden;
+                    height:0;
+                }
+            }
+```
+运行效果是： ![./views/text-align.png]()
 
+###### 文本换行
+word-wrap:指定了浏览器是否可以把长单句折断，使其容纳在父元素中。值为normal表示指定文本行只能在两个单词之间折断（除非在标记中另有指定）；值为break-word表示允许单词在需要防止溢出父元素的时候折断。
+white-space：声明建立布局过程中如何处理元素中的空白符。可能的值有：
+* normal:默认，忽略空白符，忽略原有换行符。自动换行，不会有滚动条
+* pre:保留空白符；保留换行符，即保留原有格式
+* nowrap:忽略空白符，文本不换行，直到遇到</br>；
+* pre-wrap:保留空白符，自动进行换行，不会有滚动条
+* pre-line:合并空白符，保留换行符；
+word-break:break-all和word-wrap:break-word都是能使其容器如DIV的内容自动换行。 <br>
+但是word- break:break-all 例如div宽200px，它的内容就会到200px自动换行，如果该行末端有个英文单词很长（congratulation等），它会把单词截断，变成该 行末端为conra(congratulation的前端部分)，下一行为tulation（conguatulation）的后端部分了。 <br>
+而word-wrap:break-word 例子与上面一样，但区别就是它会把congratulation整个单词看成一个整体，如果该行末端宽度不够显示整个单词，它会自动把整个单词放到下一行，而不会把单词截断掉的。
 
-
-
-
-
+######  应用标点属性
+有时候我们喜欢把标点固定到文本块的页边空白处，此时就需要在text-indent上设置一个负值。  <br>
+text-indent 属性规定文本块中首行文本的缩进,如果使用负值，那么首行会被缩进到左边.。
 
 
 
