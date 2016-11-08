@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>3D动画效果</title>
+</head>
+<style type="text/css">
+		.out_box{width:500px; height:300px; margin:100px auto 0; overflow:hidden;}
+		.out_box img{float:left;}
+		#animate_3d{
+			-webkit-perspective:600; 
+			-webkit-transform-style:preserve-3d; 
+			-webkit-animation-name:x-spin; 
+			-webkit-animation-duration:7s; 
+			-webkit-animation-iteration-count:infinite; 
+			-webkit-animation-timing-function:linear;
+		}
+		.img_3d,.line_3d{
+			-webkit-transform-style:preserve-3d; 
+			-webkit-animation-iteration-count:infinite; 
+			-webkit-animation-timing-function:linear;
+		}
+		#animate_line_1{
+			-webkit-animation-name:y-spin;
+			-webkit-animation-duration:5s;
+		}
+		#animate_line_2{
+			-webkit-animation-name:back-y-spin;
+			-webkit-animation-duration:4s;
+		}
+
+		#animate_line_3{
+			-webkit-animation-name:y-spin;
+			-webkit-animation-duration:3s;
+		}
+		@-webkit-keyframes x-spin {
+			0%    { -webkit-transform:rotateX(0deg); }
+			50%   { -webkit-transform:rotateX(180deg); }
+			100%  { -webkit-transform:rotateX(360deg); }
+		}
+		@-webkit-keyframes y-spin {
+			0%    { -webkit-transform:rotateY(0deg); }
+			50%   { -webkit-transform:rotateY(180deg); }
+			100%  { -webkit-transform:rotateY(360deg); }
+		}
+
+		@-webkit-keyframes back-y-spin {
+			0%    { -webkit-transform:rotateY(360deg); }
+			50%   { -webkit-transform:rotateY(180deg); }
+			100%  { -webkit-transform:rotateY(0deg); }
+		}
+</style>
+<body>
+<div id="animate_3d" class="out_box">
+	<div id="animate_line_1" class="line_3d">
+		<img class="img_3d" src="./images/01.jpg" />
+		<img class="img_3d" src="./images/02.jpg" />
+		<img class="img_3d" src="./images/03.jpg" />
+		<img class="img_3d" src="./images/04.jpg" />
+		<img class="img_3d" src="./images/05.jpg" />
+	</div>
+	<div id="animate_line_2" class="line_3d">
+		<img class="img_3d" src="./images/06.jpg" />
+		<img class="img_3d" src="./images/07.jpg" />
+		<img class="img_3d" src="./images/08.jpg" />
+		<img class="img_3d" src="./images/09.jpg" />
+		<img class="img_3d" src="./images/10.jpg" />
+	</div>
+	<div id="animate_line_3" class="line_3d">
+		<img class="img_3d" src="./images/11.jpg" />
+		<img class="img_3d" src="./images/12.jpg" />
+		<img class="img_3d" src="./images/13.jpg" />
+		<img class="img_3d" src="./images/14.jpg" />
+		<img class="img_3d" src="./images/15.jpg" />
+	</div>
+</div>
+</body>
+</html>
