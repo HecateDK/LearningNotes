@@ -180,11 +180,81 @@ rotate3d()可详见 [这里](https://developer.mozilla.org/en-US/docs/Web/CSS/tr
 ```css
 E{ transform:translateZ( 30px ); }   /* 沿着z轴把div移动30px */
 ```
+现在有一个新的简写函数translate3d，能够设置全部的三个值： <br>
+```CSS
+E { transform:translate3d(translateX,translateY,translateZ); }
+```
+###### 缩放
+与二维的scale函数一样，三维里增加了scaleZ子函数：
+```css
+E{ transform:scaleZ(number); }    /* number值提供了元素的缩放因子，但因为元素本身没有深度，只有高度和宽度，所以在scaleZ中增加数值看上去对元素并没有改变，所增加的数值实际上起的作用就像提供给translateZ值的乘数，如下所示： */
+E{ transform:scaleZ(3) translateZ(10px); } /* scaleZ函数的值3会乘以translateZ函数的值10px，所以该元素将会显示在z轴上30px的位置 */
+```
+同样地，新的简写函数scale3d能够设置三个值.。
+###### 变换矩阵
+2D变换矩阵比较难懂的就是matrix函数了，它允许设置六个值（基于网络状排列）和一些三角几何计算去应用复杂的变换。 <br>
+对应地3d中存在matrix3d函数，可以设置16个值： <br>
+```css
+E{ transform:matrix3d(a1, b1, c1, d1, a2, b2, c2, d2, a3, b3, c3, d3, a4, b4, c4, d4); }
+```
+这个函数非常强大——也非常复杂。。。
+###### 透视
+CSS 3D提供了一个全新的函数——perspective。perspective 属性定义 3D 元素距视图的距离，以像素计。该属性允许您改变 3D 元素查看 3D 元素的视图。 <br>
+当为元素定义 perspective 属性时，其子元素会获得透视效果，而不是元素本身。 <br>
+```CSS
+#div1{
+position: relative;
+height: 150px;
+width: 150px;
+margin: 50px;
+padding:10px;
+border: 1px solid black;
+perspective:150;          /* 设置元素被查看位置的视图 */
+-webkit-perspective:150; /* Safari and Chrome */
+}
+#div2{
+padding:50px;
+position: absolute;
+border: 1px solid black;
+background-color: yellow;
+transform: rotateX(45deg);
+-webkit-transform: rotateX(45deg); /* Safari and Chrome */
+}
+```
+perspective属性需要和perspective-origin 属性搭配使用，perspective-origin 属性定义 3D 元素所基于的 X 轴和 Y 轴。该属性允许您改变 3D 元素的底部位置。当为元素定义 perspective-origin 属性时，其子元素会获得透视效果，而不是元素本身。
+###### 显示或隐藏背面
+元素旋转的时候，一旦元素的正面远离我们的时候，我们会看到元素的背面。默认情况下，元素似乎就像透明一样，使所以实际上我们看到正面所显示内容的反转图像。CSS3提供了backface-visibility属性来改变这一情况。 <br>
+如果在旋转元素不希望看到其背面时，该属性很有用。 <br>
+```css
+div{
+position:relative;
+height:60px;
+width:60px;
+border:1px solid #000;
+background-color:yellow;
+transform:rotateY(180deg);
+-webkit-transform:rotateY(180deg); /* Chrome and Safari */
+-moz-transform:rotateY(180deg); /* Firefox */
+}
+#div1{
+-webkit-backface-visibility:hidden;      /* 元素的 backface-visibility 属性设置为 "hidden"，所以应该是不可见的 */
+-moz-backface-visibility:hidden;
+-ms-backface-visibility:hidden;
+}
+#div2{
+-webkit-backface-visibility:visible;
+-moz-backface-visibility:visible;
+-ms-backface-visibility:visible;
+}
+```
 
 
 
-
-
+<br>
+更多关于2D/3D变换可以参考：
+[漫谈CSS transform动画技术](http://www.webhek.com/css-animation-using-css-transforms)  <br>
+[CSS3 3D transform变换](http://www.zhangxinxu.com/wordpress/?p=2592)   <br>
+[CSS3 变换](https://segmentfault.com/a/1190000003986706)
 
 
 
