@@ -107,7 +107,7 @@ transform:matrix(0.866,0.5,-0.5,0.866,0,0);
 }
 ```
 更深入具体介绍matrix()方法可以 [点击这里](http://www.zhangxinxu.com/wordpress/?p=2427)
-####### 使用webkit反射
+###### 使用webkit反射
 “Web2.0”的一种常见的设计手法就是反射的图片——即让一张图片看上去似乎在光滑的表面上出现了反射。 <br>
 CSS3中的-webkit-box-reflect即可实现这一效果，语法为：
 ```css
@@ -251,7 +251,7 @@ transform:rotateY(180deg);
 
 
 <br>
-更多关于2D/3D变换可以参考：
+更多关于2D/3D变换可以参考：  <br>
 [漫谈CSS transform动画技术](http://www.webhek.com/css-animation-using-css-transforms)  <br>
 [CSS3 3D transform变换](http://www.zhangxinxu.com/wordpress/?p=2592)   <br>
 [CSS3 变换](https://segmentfault.com/a/1190000003986706)
