@@ -5,3 +5,4 @@
 * [CSS3小记](https://github.com/HecateDK/LearningNotes/blob/master/CSS3.md)
 * [CSS3——2D/3D](https://github.com/HecateDK/LearningNotes/blob/master/css3_2d_3d.md)
 * [CSS动画](https://github.com/HecateDK/LearningNotes/blob/master/CSS3animation.md)
+* [前端性能优化](https://github.com/HecateDK/LearningNotes/blob/master/PerformanceOptimization.md)
