@@ -40,25 +40,25 @@ a          //'a'
 本质上，这种写法属于“模式匹配”，只要等号两边的模式相同，左边的变量就会被赋予对应的值，但事实上，用变量来描述并不恰当，因为我们可以对任意深度嵌套的数组进行结构，例如：
 ```javascrpt
 let [a,[[b],c]] = [1,[[2],3]];
-a   //1
-b   //2
-c   //3
+console.log(a);   //1
+console.log(b);   //2
+console.log(c);   //3
 
 let [,,d] = ['1','2','3'];      // 在对应位留空来跳过被解构数组中的某些元素
-d   //3
+console.log(d);   //3
 
 let [x,,y] = [1,2,3];
-x   //1
-y   //3
+console.log(x);   //1
+console.log(y);   //3
 
 let [head,...tail] = [1,2,3,4];   //通过“不定参数”模式捕获数组中的所有尾随元素
-head   //1
-tail   //[2,3,4]
+console.log(head);   //1
+console.log(tail);   //[2,3,4]
 
 let [x,y,...z] = ['a'];      //当访问空数组或越界访问数组时，对其解构与对其索引的行为一致，最终得到的结果都是undefined
-x     //'a'
-y     //undefined
-z     //[]
+console.log(x);     //'a'
+console.log(y);     //undefined
+console.log(z);     //[]
 ```
 如果解构不成功，变量的值就会等于undefined。
 ```javascript
