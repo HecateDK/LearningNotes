@@ -8,13 +8,6 @@
 * [Promise对象](https://github.com/HecateDK/LearningNotes/blob/master/ECMAScript6/Promise.md)
 * [Class类](https://github.com/HecateDK/LearningNotes/blob/master/ECMAScript6/Class.md)
 * [Module模板](https://github.com/HecateDK/LearningNotes/blob/master/ECMAScript6/Module.md)
-* []()
-* []()
-* []()
-* []()
-* []()
-* []()
-* []()
 
 #### 简介
 ES6中比较常用的10个特性为： <br>
@@ -28,6 +21,7 @@ ES6中比较常用的10个特性为： <br>
 * Default Parameters（默认参数）
 * Template Literals （模板文本）
 * Multi-line Strings （多行字符串）
+
 这些改变将给javascript开发者带来更酷的开发体验。 <br>
 但是尽管很多的浏览器对ES6支持性都很好，但还是免不了要对ES6进行转码。 <br>
 这就需要用到Babel——一个广泛使用的ES6转码器，可以将ES6代码转为ES5代码，从而在现有环境执行。这意味着，你可以用ES6的方式编写程序，又不用担心现有环境是否支持。 <br>
@@ -119,7 +113,10 @@ a[i]();
 ###### let
 从上面的例子可知，let命令是用来声明变量的，用法和var类似，但是let所声明的变量，只在let命令所在代码块内有效。 
 所以for循环的计数器就很适合使用let命令。<br>
+
+
 >let命令有四大主要特性：存在块级作用域，没有变量提升，暂时性死区，不允许重复声明。
+
 ###### let命令不存在变量提升
 let声明的变量存在块级作用域，函数本身的作用域，只存在其所在的块级作用域之内。 <br>
 什么是变量提升呢？
@@ -298,6 +295,7 @@ const声明的是一个常量，也就是说const一旦声明，就必须初始�
 const的作用域与let相同：只在声明所在的块级作用域内有效； <br>
 const命令声明的常量也是不提升的，同样存在暂时性死区，只能在声明的位置后面使用； <br>
 const声明的常量也与let一样不可重复声明。 <br>
+
 对于复合类型的变量，变量名不指向数据，而是指向数据所在的地址，const命令只是保证变量名指向的地址不变，并不保证该地址的数据不变。
 ```javascript
 const foo = {};   
@@ -312,7 +310,9 @@ a.push('Hello');   //可执行
 a.length = 0;      //可执行
 a = ['dave'];      //报错
 ```
+
 >const有一个很好的应用场景，就是当我们引用第三方库的时候声明的变量，用const来声明可以避免未来不小心重命名而导致出现的bug。
+
 ```javascript
 const momen = require('moment')
 ```
