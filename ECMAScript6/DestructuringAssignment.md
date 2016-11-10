@@ -35,10 +35,10 @@ console.log(b); // 2
 对于set结构，也可以使用数组的解构赋值：
 ```javascript
 [a,b,c] = new Set(['a','b','c'])
-a          //'a'
+console.log(a);          //'a'
 ```
 本质上，这种写法属于“模式匹配”，只要等号两边的模式相同，左边的变量就会被赋予对应的值，但事实上，用变量来描述并不恰当，因为我们可以对任意深度嵌套的数组进行结构，例如：
-```javascrpt
+```javascript
 let [a,[[b],c]] = [1,[[2],3]];
 console.log(a);   //1
 console.log(b);   //2
