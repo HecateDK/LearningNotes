@@ -3,11 +3,11 @@
 
 * [简介](#简介)
 * [let, const](#let和const)
-* []()
-* []()
-* []()
-* []()
-* []()
+* [解构赋值](https://github.com/HecateDK/LearningNotes/blob/master/ECMAScript6/DestructuringAssignment.md)
+* [箭头函数](https://github.com/HecateDK/LearningNotes/blob/master/ECMAScript6/ArrowFunctions.md)
+* [Promise对象](https://github.com/HecateDK/LearningNotes/blob/master/ECMAScript6/Promise.md)
+* [Class类](https://github.com/HecateDK/LearningNotes/blob/master/ECMAScript6/Class.md)
+* [Module模板](https://github.com/HecateDK/LearningNotes/blob/master/ECMAScript6/Module.md)
 * []()
 * []()
 * []()
@@ -17,7 +17,18 @@
 * []()
 
 #### 简介
-最常用的ES6语法是let, const, class, extends, super, arrow functions, template string, destructuring, default, rest arguments等，这些改变将给javascript开发者带来更酷的开发体验，
+ES6中比较常用的10个特性为： <br>
+* Block-Scoped Constructs Let and Const（块作用域构造Let and Const）
+* Destructuring Assignment （解构赋值）
+* Arrow Functions （箭头函数）
+* Promise对象
+* Class（类）
+* Module（模块）
+* Enhanced Object Literals （增强的对象文本）
+* Default Parameters（默认参数）
+* Template Literals （模板文本）
+* Multi-line Strings （多行字符串）
+这些改变将给javascript开发者带来更酷的开发体验。 <br>
 但是尽管很多的浏览器对ES6支持性都很好，但还是免不了要对ES6进行转码。 <br>
 这就需要用到Babel——一个广泛使用的ES6转码器，可以将ES6代码转为ES5代码，从而在现有环境执行。这意味着，你可以用ES6的方式编写程序，又不用担心现有环境是否支持。 <br>
 例如：
