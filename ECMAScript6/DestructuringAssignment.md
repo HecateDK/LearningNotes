@@ -76,6 +76,7 @@ var [foo] = {};
 var [x,y] = [1,2,3];          //x和y都可以顺利取到
 ```
 > 但是如果对undefined或null进行结构，就会报错。这是因为解构只能用于数组或对象，其他原始类型的值都可以转为相应的对象，但是'undefined'和'null'不能转为对象，因此会报错。
+
 ```javascript
 // 报错
 var [foo] = undefined;
