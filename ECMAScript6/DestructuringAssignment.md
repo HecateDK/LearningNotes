@@ -99,7 +99,67 @@ function* fibs() {
 
 
 ##### 对象的结构赋值
+通过解构对象，我们可以把它的属性与不同的变量绑定，首先指定被绑定的属性，然后紧跟一个要解构的变量。
+```javascript
+var robotA = { name:'aaaa' },
+    robotB = { name:'bbbb' },
+    { name:nameA } = robotS,
+    { name:nameB } = robotB;
+console.log(nameA);        // 'aaaa'
+console.log(nameB);        // 'bbbb'
+```
+>对象的解构与数组有一个很不同的地方在于：数组元素是按次序排列的，变量的取值由它的位置决定；而对象的属性没有次序，变量必须与属性名同名，才能取到正确的值。
 
+```javascript
+var { bar,foo } = { foo:'aaaa',bar:'bbbb' };   // 等号两边的两个变量的次序，与等号右边两个同名属性的次序不一样，这对取值是没有影响的
+console.log(foo);    // 'aaaa'
+console.log(bar);    // 'bbbb'
+var { baz } = { foo:'aaaa',bar:'bbbb' };     // 变量没有对应的同名属性，导致取不到值，最后值为undefined
+console.log(baz);    //undefined
+```
+如果变量名与属性名不一致，必须写成下面这样：
+```javascript
+var { foo:baz } = { foo:'zzz',bar:'xxx' };
+console.log(baz);   // 'zzz'
+
+let obj = { first:'aaa',last:'bbb' };
+let { first:f,last:l } = obj;
+console.log(f);     // 'aaa'
+console.log(l);    //'bbb'
+```
+所以，对象的解构可以写成以下简写形式：
+```javascript
+var { foo: foo, bar: bar } = { foo: "aaa", bar: "bbb" };
+```
+###### 也就是说，对象的解构赋值的内部机制，是先找同名属性，然后再赋给对应的变量。真正被赋值的是后者，而不是前者。
+```javascript
+var { foo:baz } = { foo:'aaaa',bar:'bbbb' };
+console.log(baz);          // 'aaaa'
+console.log(foo);          // error:foo is not defined
+```
+对对象进行解构赋值时，变量的声明和赋值是一体的，对于let和const来说，变量不能重新声明，所以一旦赋值的变量声明过，就会报错。 <br>
+但是如果没有第二个let命令行，这种情况下就不会报错：
+```javascript
+let foo;
+let {foo} = {foo:1};   // SyntaxError: Duplicate declaration "foo"
+let baz;
+let {bar:baz} = {bar:1};    // SyntaxError: Duplicate declaration "baz"
+
+let foo;
+({foo} = {foo:1});    //success
+let baz;
+({bar:baz} = {bar:1});   //success
+```
+当我们解构对象并赋值变量时，如果已经声明或不打算声明这些变量（也就是说赋值语句前没有let、const或var关键字），这时候就会遇到如下的语法错误：
+```javascript
+{foo} = {foo:10};             // Syntax erro
+```
+因为解析器会将起首的大括号，理解成一个代码块，而不是赋值语句。解决方案是将整个表达式用一对小括号包裹：
+```javascript
+let baz;
+({bar:baz} = {bar:1});   //success
+```
+###### 和数组一样，解构也可以嵌套结构的对象。
 
 
 
