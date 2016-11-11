@@ -123,8 +123,30 @@ promise.then(function(value){      // promise实例生成后，可以用then方�
   // faile
 });
 ```
-下面用Promise来通过异步处理方式来获取XMLHttpRequest(XHR)的数据
-
+###### 下面用Promise来通过异步处理方式来获取XMLHttpRequest(XHR)的数据
+首先创建一个用Promise把XHR处理包装起来名为getURL的函数体
+```javascript
+function getURL(URL){
+    return new Promise(function(resolve,reject){
+        var req = new XMLHttpRequest();
+        req.open('GET',URL,true);
+        req.onload = function(){
+            if(req.status === 200){
+                resolve(req.statusText);
+            }else{
+                reject(new Error(req.statusText));
+            }
+        };
+        req.onerror = function(){
+            reject(new Error(req.statusText));
+        };
+        req.send();
+    });
+}
+// 运行实例
+var URL = 'XXX';
+getURL(URL).then
+```
 
 
 
