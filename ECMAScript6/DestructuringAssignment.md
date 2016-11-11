@@ -301,8 +301,7 @@ returnMultipleValues ((foo,bar) => ...);
 const { SOurceMapConsumer,SourceNode } = require('source-map');
 ```
 
-
-感谢 InfoQ[深入浅出ES6（六）：解构 Destructuring](http://www.infoq.com/cn/articles/es6-in-depth-destructuring)
+参考 Firefox开发者工具工程师Nick Fitzgerald最初在他的博客上发布了一篇文章 [ES6的解构赋值](http://fitzgeraldnick.com/2013/08/02/testing-source-maps.html)
 
 
 
