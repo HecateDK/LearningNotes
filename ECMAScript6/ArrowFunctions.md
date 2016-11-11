@@ -80,12 +80,94 @@ function () { return arguments[0]; }
 ```
 
 
+##### this
+###### 普通function函数和箭头函数的行为的一个微妙的区别是——箭头函数没有它自己的this值，箭头函数内的this值继承自外围作用域。
+javascript里的this，无论我们是否需要它，function函数总会自动接收一个this值。
+> this的工作原理可以点击 [这里](http://stackoverflow.com/questions/3127429/how-does-the-this-keyword-work)
+例如：使用jquery来展示一个每秒都会更新的时钟：
+```javascript
+$('.current_time').each(function () {         // 当尝试在setInterval的回调中使用this来引用DOM元素时，我们得到的却是一个属于回调函数自身上下文的this
+  setInterval(function(){
+    $(this).text(Date.now());
+  },1000);
+});
+```
+
+因为内层函数并没有从外层函数继承this的值，在内层函数里，this会是window或undefined。临时变量self用来将外部的this值导入内部函数（还有另一种方法是在内部函数上执行.bind(this)）：
+```javascript
+$('.current_time').each(function(){
+  var self = this;
+  setInterval(function(){
+   $(self).text(Date.now()); 
+  },1000);
+});
+```
+
+但是当我们使用箭头函数的时候，这个问题就不存在了，因为箭头函数会产生一个不属于它自己的上下文this。但要遵循以下规则：
+* 通过object.method()语法调用的方法用非箭头函数定义，这些函数需要从调用者的作用域中获取一个有意义的this值
+* 其它情况全都用箭头函数
+上面的js可以用箭头函数简写为：
+```javascript
+$('.current_time').each(function(){
+  setInterval(() => $(this).text(Date.now()),1000);
+});
+```
+再来看一个例子：
+```javascript
+// ES5
+{
+  ...
+  addAll:function addAll(pieces){
+     var self = this;
+     _each(pieces,function(piece){
+      self.add(piece);     // 内层函数并没从外层函数继承this的值
+     });
+  },
+  ...
+}
+
+// ES6
+{
+  ...
+  addAll:function addAll(pieces){
+    _each(pieces,piece => this.add(piece));
+  },
+  ...
+}
+
+// ES6 使用对象字面量方法：
+{
+  ...
+  addAll(pieces){
+    _each(pieces,piece => this.add(piece));
+  },
+  ...
+}
+```
+
+###### 箭头函数与普通函数的另一个区别是——它没有自己的arguments变量
+```javascript
+function log(msg){
+  const print = () => console.log(arguments[0]);
+  print('LOG:${msg}');
+}
+log('hello');     // 'hello'
+```
+###### 箭头函数没有属于自己的this和arguments，但是我们可以通过rest参数来得到所有存入的参数数组。
+```javascript
+function log(msg){
+  const print = (...args) => console.log(args[0]);
+  print('LOG:$(msg)');
+}
+log('hello');         // LOG:hello
+```
+
+=> 替代function是非常便捷的，但是不是什么情况（例如只使用=>来声明函数的代码）都适合用=>，推荐存在以下两种情况时候使用箭头函数：
+* 当只有一条声明（statement）语句时，隐式return
+* 需要使用到父作用域中的this
 
 
-
-
-
-
+原文 [An Introduction to JavaScript ES6 Arrow Functions](https://strongloop.com/strongblog/an-introduction-to-javascript-es6-arrow-functions/)
 
 
 
