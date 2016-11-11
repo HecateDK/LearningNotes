@@ -75,6 +75,7 @@ var [foo] = {};
 ```javascript
 var [x,y] = [1,2,3];          //x和y都可以顺利取到
 ```
+###### 解构赋值的规则是：只要等号右边的值不是对象，就会先将其转为对象。
 > 但是如果对undefined或null进行结构，就会报错。这是因为解构只能用于数组或对象，其他原始类型的值都可以转为相应的对象，但是'undefined'和'null'不能转为对象，因此会报错。
 
 ```javascript
@@ -160,19 +161,148 @@ let baz;
 ({bar:baz} = {bar:1});   //success
 ```
 ###### 和数组一样，解构也可以嵌套结构的对象。
+```javascript
+var obj = {
+    p:[                // p是模式，不是变量，不会被赋值
+        'Hello',
+        {y:'World'}
+    ]
+};
+var {p:[x,{y}]} = obj;
+console.log(x);         // 'Hello'
+console.log(y);         // 'World'
+
+var node = {
+    loc:{         // 只有line是变量，start和loc都是模式，不会被赋值
+        start:{
+            line:1,
+            column:5
+        }
+    }
+};
+var { loc:{ start:{ line } } } = node;
+console.log(start);        // error:start is undefined  
+console.log(loc);          // error:loc is undefined
+console.log(line);         // 1
+```
+请看一个嵌套赋值的例子：
+```javascript
+let obj = {};
+let arr = [];
+( { foo:obj.prop,bar:arr[0] } ={ foo:123,bar:true } );
+console.log(obj);         // '{prop:123}'
+console.log(arr);         // '[true]'
+```
+> 同样的，如果解构失败，变量的值就等于undefined； <br>
+> 如果解构模式是嵌套的对象，但是对象所在的父属性不存在，就会报错。
+
+```javascript
+var {foo} = {bar:'baz'};
+console.log(foo);       // undefined
+
+var {foo:{bar}} = {baz:'baz'};         // 等号左边对象的foo属性，对应一个子对象，但是该子对象的bar属性，解构时就会报错（因为此时foo为undefined，再取子属性就会报错）
+
+var _tmp = {baz:'baz'};
+console.log(_tmp.foo.bar);             // 报错
+```
+
+##### 字符串的结构赋值
+字符串解构赋值时，字符串是被转换成一个类似数组的对象。同时，也可以对字符串的length属性，进行解构赋值。
+```javascript
+const [a,b,c,d,e] = 'Hello';
+console.log(a);    // 'H'
+console.log(c);    // 'l'
+console.log(e);    // 'o'
+
+let {length:len} = 'hello';
+console.log(len);    // 5
+```
+
+##### 解构的实际应用
+###### 函数参数定义
+设计API的时候，通常的做法是为函数设计一个对象作为参数，然后把不同的实际参数作为对象属性，以避免让API使用者记住多个参数的使用顺序。 <br>
+现在我们就可以利用解构避免这种问题了，当我们想要引用其中一个属性时，就不必反复使用这种单一参数对象。
+```javascript
+// Firefox开发工具javascript调试器的代码片段
+function removeBreakpoint({ url,line,colum }){
+    //  ....
+}
+```
+
+###### 配置对象参数
+当我们构造一个提供配置的对象，并且需要这个对象的属性携带默认值时，就需要用到解构了。 <br>
+例如：jquery的ajax函数使用一个配置对象作为它的第二参数，就可以像下面一样重写函数定义：
+```javascript
+jQuery.ajax = function(url,{
+    async = true,
+    beforeSend = noop,
+    cache = true,
+    complete = noop,
+    crossBomain = false,
+    global = true,
+    //   .....更多配置
+}){
+    //  ...dosomething
+};
+```
+如此一来，我们就可以避免配置对象的每个属性都要重复 var foo = config.foo || theDefaultFoo:
+
+###### 与ES6迭代器协议协同使用
+ES6中定义了一个迭代器协议，当我们迭代Maps（ES6标准库中新加入的一种对象）后，我们就会得到一系列如[key,value]的键值对，所以我们就可以对这些键值对进行解构，就能更轻松地访问键和值。
+```javascript
+var map = new Map();
+map.set(window,'the global');
+map.set(document,'the document');
+for(var [key,value] of map){
+    console.log(key + 'is' + value);
+}
+// '[object Window] is the global'
+// '[object HTMLDocument] is the document'
+
+// 只遍历键
+for(var [key] of map)[
+    // ...
+}
+// 只遍历值
+for(var [,value] of map){
+    //....  
+}
+```
+###### 多重返回值
+利用解构可以返回一个数组并将结果解构：
+```javascript
+function returnMultipleValues() {
+    return [1,2];
+}
+var [foo,bar] = returnMultipleValues();
+
+//也可以用一个对象作为容器并为返回值命名
+function returnMultipleValues(){
+    return {
+        foo:1,
+        bar:2
+    };
+}
+var tmp = returnMultipleValues(),
+    foo = tmp.foo,
+    bar = tmp.bar;
+    
+//或者使用CPS变换
+function returnMultipleValues(k){
+    K(1,2);
+}
+returnMultipleValues ((foo,bar) => ...);
+```
+
+###### 使用解构导入部分ComonJS模块
+当我们导入CommonJS模块X时，很可能在模块X中导入了很多我们根本就不打算用的函数，通过解构，可以显式地定义模块的一部分来拆分使用，同时还不污染命名空间：
+
+```javascript
+const { SOurceMapConsumer,SourceNode } = require('source-map');
+```
 
 
-
-
-
-
-
-
-
-
-
-
-
+感谢 InfoQ[深入浅出ES6（六）：解构 Destructuring](http://www.infoq.com/cn/articles/es6-in-depth-destructuring)
 
 
 
