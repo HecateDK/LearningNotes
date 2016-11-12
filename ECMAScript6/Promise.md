@@ -1,7 +1,8 @@
 ### Promise
 ###### 什么是Promise？
-JavaScript Promise迷你书：Promise是抽象异步处理对象以及对其进行各种操作的组件。  <br>
-MDN：所谓Promise，简单说就是一个容器，里面保存着某个未来才会结束的事件（通常是一个异步操作）的结果。 <br>
+> JavaScript Promise迷你书：Promise是抽象异步处理对象以及对其进行各种操作的组件。  <br>
+> MDN：所谓Promise，简单说就是一个容器，里面保存着某个未来才会结束的事件（通常是一个异步操作）的结果。 <br>
+
 Promise是一个对象，与其他的javascript对象的用法没什么不一样；Promise在异步编程中，主要起到代理作用，充当异步操作与回调函数之间的中介。它使得异步操作具备同步操作的接口，使得程序具备正常的同步运行的流程，回调函数不必再一层层嵌套。
 Promise的思想，其实就是每一个异步任务立刻返回一个Promise对象，因为是立即返回的，所以可以采用同步操作的流程。
 ##### JavaScript的异步执行
@@ -146,20 +147,102 @@ function getURL(URL){
 }
 // 运行实例
 var URL = 'XXX';          // getURL('XXX'); 能够返回promise对象
-getURL(URL).then(function onFulfilled(value){    // 
+getURL(URL).then(function onFulfilled(value){    // getURL函数中的 resolve(req.responseText) 会将promise对象变为resolve状态，同时使用其调用onFulfilled函数
     console.log(vaue);
-}).catch(function onRejected(error){
+}).catch(function onRejected(error){     //  等同于 getURL().then(onFulfilled,onRejected)
     console.log(error);
 });
 ```
+###### Promise对象实现Ajax操作的例子
+```javascript
+var getJSON = function(url){
+    var promise = new Promise(function(resolve,reject){
+        var client = new XMLHttpRequest();
+        client.open('GET',url);
+        client.onreadystatechange = handler;
+        client.responseType = 'json';
+        client.setRequestHeader('Accept','application/json');
+        client.send();
+        
+        function handler(){
+            if(this.status === 200){
+                resolve(this.response);
+            }else{
+                reject(new Error(this.statusText));
+            }
+        };
+    });
+    return promise;
+};
+
+getJSON('/json/posts.json').then(function(json){
+    console.log('Contents:' + json);
+},function(error){
+    console.error('出错了',error);
+});
+```
+
+#### Promise提供的各种方法
+###### Promise.resolve
+静态方法Promise.resolve(value)可以认为是new Promise()方法的快捷方式:
+```javascript
+new Promise(function(resolve){               
+    resolve(42);        // resolve(42)会让这个promise对象立即进入resolved状态，并将42传递给后面then指定的onFulfilled函数
+});
+// 上述代码的语法糖为：
+Promise.resolve(42);   
+
+// Promise.resolve(value);的返回值也是一个promise对象，所以能够像下面的代码那样对其返回值进行.then调用
+Promise.resolve(42).then(function(value){
+    console.log(value);
+});
+```
+
+Promise.resolve方法的另一个作用就是将thenable对象转换为promise对象 <br>
+thenable对象，是一个非常类似promise的东西，指的是一个具有.then方法的对象。最简单的thenable例子就是jQuery.ajax()，它的返回值就是thenable
+```javascript
+$.ajax('/json/area.json');   // 因为jQuery.ajax()的返回值是jqXHR Object对象，拥有'.then'方法的对象
+```
+###### 将thenable对象转换为promise对象
+```javascript
+var promise = Promise.resolve($.ajax('/json/area.json'));     // promise对象
+promise.then(function(value){
+    console.log(value);
+});
+```
+> 简单来说，Promise.resolve方法的作用就是将传递给它的参数填充到promise对象后并返回这个promise对象 <br>
+Promise很多处理内部也是使用Promise.resolve方法把值转为promise对象后再进行处理。
 
 
+###### resolve方法的参数除了正常的值以外，还可能是另一个Promise实例
+```javascript
+// p1/p2都是Promise的实例，p2的resolve方法将p1作为参数，这时p1的状态就会传递给p2.
+// 如果调用的时候，p1的状态是pending，那么p2的回调函数就会等待p1的状态改变；
+// 如果p1的状态已经是fulfilled或者rejected，那么p2的回调函数立马执行
+var p1 = new Promise(function(resolve,reject){
+    // ....dosomething
+});
+var p2 = new Promise(function(resolve,reject){
+    // ...dosomething
+    resolve(p1);
+})
+```
+###### Promise.reject
+Promise.reject(error)是和Promise.resolve(value)类似的静态方法，是 new Promise()方法的快捷方式。
+```javascript
+new Promise(function(resolve,reject){
+    reject(new Error("出错了"));
+});
+// 语法糖
+Promise.reject(new Error('出错了'));
 
-
-
-
-
-
+Promise.reject(new Error('BOM!')).catch(function(error){
+    console.log(error);
+});
+```
+###### Promise.prototype.then方法：链式操作
+因为Promise.prototype.then和 Promise.prototype.catch方法返回 promises对象, 所以它们可以被链式调用—— 一种被称为 composition 的操作。 <br>
+![](../views/promises.png)
 
 
 
