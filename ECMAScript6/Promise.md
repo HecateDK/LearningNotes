@@ -131,22 +131,28 @@ function getURL(URL){
         var req = new XMLHttpRequest();
         req.open('GET',URL,true);
         req.onload = function(){
-            if(req.status === 200){
-                resolve(req.statusText);
+            if(req.status === 200){         // getURL只有在通过XHR取得结果状态为200时才会调用resolve
+                resolve(req.responseText);  // 在response的内容中加入参数（resolve方法的参数没有特别规定，基本上把要传给回调函数参数放进去就可以了，then方法就可以接收到这个参数）
             }else{
-                reject(new Error(req.statusText));
+                reject(new Error(req.statusText));   // 发生错误时创建一个Error对象后再将具体的值传进去（传给reject的参数也没有特别规定，一般只要是Error对象就可以了）
+                // 传给reject的参数，一般包含了reject原因的Error对象，这里是因为状态值不为200所以被reject，所以reject中放入statusText（该参数能被then方法的第二个参数或catch方法中使用）
             }
         };
-        req.onerror = function(){
+        req.onerror = function(){    // XHR中onerror事件被触发的时候就是发生错误，调用reject
             reject(new Error(req.statusText));
         };
         req.send();
     });
 }
 // 运行实例
-var URL = 'XXX';
-getURL(URL).then
+var URL = 'XXX';          // getURL('XXX'); 能够返回promise对象
+getURL(URL).then(function onFulfilled(value){    // 
+    console.log(vaue);
+}).catch(function onRejected(error){
+    console.log(error);
+});
 ```
+
 
 
 
