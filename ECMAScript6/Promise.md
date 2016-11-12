@@ -275,6 +275,152 @@ doSomething().then(doSomenthingElse).then(finalHandler);
 
 ###### Promise.prototype.catch方法：捕捉错误
 实际上 Promise.prototype.catch 只是 promise.then(undefined, onRejected); 方法的一个别名而已。 也就是说，这个方法用来注册当promise对象状态变为Rejected时的回调函数。
+```javascript
+var promise = Promise.reject(new Error('message'));
+promise.catch(function(error){
+    console.error(error)
+});            // Error: message
+
+// 上面的代码在IE8下会出现语法错误：identifier not found（因为IE8及以下版本都是基于ECMAScript 3实现的，在ECMAScript 3中保留字是不能作为对象的属性名使用的，因此不能将 catch 作为属性来使用）
+// 使用中括号标记法，可以将非合法标识符作为对象的属性名使用
+var promise = Promise.reject(new Error('message'));
+promise['catch'](function(error){
+    console.error(error);
+});          // Error: message
+// 或者用then避免这个问题
+var promise = Promise.reject(new Error('message'));
+promise.then(undefiend,function(error){
+    console.error(error);
+});          // Error: message
+```
+Promise对象的错误具有“冒泡”性质，会一直向后传递，直到被捕获为止，也就是说，错误总会被下一个catch语句捕获。
+```javascript
+getJSON('/json/area.json').then(function(post){
+    return getJSON(post.commentURL);
+}).then(function(comments){
+    // dosomething
+}).catch(function(error){
+    // 处理前两个回调函数的错误
+})；
+```
+###### Promise.all方法，Promise.race方法
+Promise.all方法用于将多个Promise实例，包装成一个新的Promise实例
+```javascript
+// Promise.all方法接受一个数组作为参数，p1/p2/p3都是Promise对象的实例
+// Promise.all方法接受的参数不一定是数组，但必须具有iterator接口，且返回的每个成员都是Promise实例
+var p = Promise.all([p1,p2,p3]);
+```
+> p的状态由p1、p2、p3决定，分成两种情况：
+* 只有p1、p2、p3的状态都变成fulfilled，p的状态才会变成fulfilled，此时p1、p2、p3的返回值组成一个数组，传递给p的回调函数
+* 只要p1、p2、p3之中有一个被rejected，p的状态就变成rejected，此时第一个被reject的实例的返回值，会传递给p的回调函数  <br>
+
+```javascript
+//生成一个Promise对象的数组
+var promise = [2,3,5,7,11,13].map(function(id){
+    return getJSON("/post/" + id + ".json");
+});
+Promise.all(promise).then(function(posts){
+    //   dosomething
+}).catch(function(reason){
+    // dosomething
+});
+```
+Promise.race方法同样是将多个Promise实例包装成一个新的Promise实例
+```javascript
+// 只要p1、p2、p3之中有一个实例率先改变状态，p的状态就跟着改变。那个率先改变的Promise实例的返回值，就传递给p的返回值
+var p = Promise.all([p1,p2,p3]);
+```
+
+##### Promise的应用
+###### 加载图片
+```javascript
+var preloadImage = function(path){
+    return new Promise(function(resolve,reject){
+        var imasge = new Image();
+        image.onload = resolve;
+        image.onerror = reject;
+        image.src = path;
+    });
+};
+```
+###### Ajax操作
+```javascript
+// 传统写法
+function search(term,onload,onerror){
+    var xhr,results,url;
+    url = 'XXX' + term;
+    xhr = new XMLHttpRequest();
+    xhr.open('GET',url,true);
+    xhr.onload = function(e){
+     if(this.status === 200){
+        results = JSON.pares(this.responseText);
+        onload(results);
+     }   
+   };
+   xhr.onerror = unction(e){
+    onerror(e);
+   };
+   xhr.send();
+};
+search('hello World',console.log,console.error);
+
+// 使用Promise对象
+function search(term){
+    var url = 'XXX' + term;
+    var xhr = new XMLHttpRequest();
+    var result;
+    
+    var p = new Promise(function(resolve,reject){
+        xhr.open('GET',url,true);
+        xhr.onload = function(e){
+            if(this.status === 200){
+                result = JOSN.parse(this.responseText);
+                resolve(result);
+            }
+        };
+        xhr.onerror = function(e){
+            reject(e);
+        };
+        xhr.send();
+    });
+    return p;
+};
+search('hello World').then(console.log,console.error);
+```
+###### 运用Ajax实现加载图片
+```javascript
+function imgLoad(url){
+    return new Promise(function(resolve,reject){
+        var request = new XMLHttpRequest();
+        request.open('GET',url);
+        request.responseType = 'blod';
+        request.onload = function(){
+            if(request.status === 200){
+                resolve(request.response);
+            }else{
+                reject(new Error('图片加载失败：' + request.statusText));
+            }
+        };
+        request.onerror = function(){
+            reject(new Error('发生网络错误'))；
+        };
+        request.send();
+    });
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
