@@ -183,6 +183,7 @@ getJSON('/json/posts.json').then(function(json){
 ```
 
 #### Promise提供的各种方法
+![](../views/promises.png)
 ###### Promise.resolve
 静态方法Promise.resolve(value)可以认为是new Promise()方法的快捷方式:
 ```javascript
@@ -242,10 +243,38 @@ Promise.reject(new Error('BOM!')).catch(function(error){
 ```
 ###### Promise.prototype.then方法：链式操作
 因为Promise.prototype.then和 Promise.prototype.catch方法返回 promises对象, 所以它们可以被链式调用—— 一种被称为 composition 的操作。 <br>
-![](../views/promises.png)
+```javascript
+aPromise.then(function taskA(value){
+    // taskA
+}).then(function taskB(value){
+    // taskB
+}).catch(function onRejected(error){
+    console.log(error);
+});
+```
+.then有四种写法，各有差异：
+```javascript
+// then方法接一个回调函数finalHandler
+// 写法一：finalHandler回调函数的参数是doSomethingElse函数运行的结果
+doSomething().then(function(){
+    return doSomenthingElse();
+}).then(finalHandler);
 
+// finalHandler回调函数的参数是undefined
+doSomething().then(function(){
+    doSomenthingElse();
+    return;
+}).then(finalHandler);
 
+// finalHandler回调函数的参数，是doSomethingElse函数返回的回调函数的运行结果
+doSomething().then(doSomenthingElse()).then(finalHandler);
 
+// doSomethingElse会接收到doSomething()返回的结果
+doSomething().then(doSomenthingElse).then(finalHandler);
+```
+
+###### Promise.prototype.catch方法：捕捉错误
+实际上 Promise.prototype.catch 只是 promise.then(undefined, onRejected); 方法的一个别名而已。 也就是说，这个方法用来注册当promise对象状态变为Rejected时的回调函数。
 
 
 
