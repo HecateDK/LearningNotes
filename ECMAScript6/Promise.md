@@ -410,7 +410,7 @@ function imgLoad(url){
 ```
 
 
-
+参考文章 [JavaScript Promise迷你书](http://liubin.org/promises-book/#how-to-write-promise)
 
 
 
