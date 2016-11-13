@@ -84,6 +84,148 @@ obj.maxinum(5,6);   // 6
 var maxinum = new Function("a","b","if(a>b) return a;else return b;");
 maxinum(5,6);     // 6
 ```
+###### 隐藏内部实现
+从所写的代码中挑选一个任意的片段，然后用函数声明来对其进行包装，实际上就是把这些代码给“隐藏”起来。 <br>
+实际上就是在这个代码片段的周围创建一个作用域气泡，也就是说这段代码中的任何声明（变量或函数）都将绑定在这个新创建的包装函数的作用域中，而不是先前所在的作用域中。所以说，可以把变量和函数包裹在一个函数的作用域中，然后用这个作用域来“隐藏”它们。 <br>
+> 最小授权或最小暴露原则——在软件设计中，应该最小限度地暴露必要的内容，将其他内容都“隐藏”起来，比如某个模块或对象的API设计 <br>
+```javascript
+function dosomething(a){
+ b = a + dosomethingElse(a*2);
+ console.log(b*3);
+}
+function dosomethingElse(a){
+ return a - 1;
+}
+var b;
+dosomething(2);          // 15
+// 上面的代码给予外部作用域对b和doSomethingElse()的访问权限不仅没有必要，而且还有可能被有意或无意地以非预期的方式使用，从而超出了doSomething()的适用条件
+// 改进
+function dosomething(a){
+ function dosomethingElse(a){
+  return a - 1;
+ }
+ var b;
+ b = a + dosomethingElse(a*2);
+ console.log(b*3);
+}
+dosomething(2);          //15
+```
+###### 规避冲突
+“隐藏”作用域中的变量和函数可以避免同名标识符之间的冲突，两个同名标识符可能用途不一样，无意间会造成冲突，并且可能发生变量的值被覆盖。
+```javascript
+function foo(){
+ function bar(a){
+  i = 3;    // 修改了for循环所属作用域中的i
+  console.log(a+i);
+ }
+ for(var i = 0;i<10;i++){
+  bar(i*2);   // 出现无限循环
+ }
+}
+foo();
+```
+解决方法：
+> 全局命名空间——在全局作用域中声明一个名字足够特别的变量，通常是一个对象。这个对象被用作库的命名空间，所有需要暴露给外界的功能都会变成这个对象（命名空间）的属性，而不是将自己的标识符暴露在顶级的词法作用域中。 <br>
+> 模块管理——从众多模块管理器中挑选一个来使用，使用这些工具，任何库都无需将标识符加入到全局作用域中，而是通过依赖管理器的机制将库的标识符显式地导入到另一个特定的作用域中。 <br>
+模块管理器的原理是：利用作用域的规则强制所有的标识符都不能注入到共享作用域中，而是保持在私有、无冲突的作用域中，这样就可以有效地规避所有冲突。 <br>
+
+
+###### 函数作用域
+在任意代码片段外部添加包装函数，可以将内部的变量和函数定义“隐藏”起来，外部作用域无法访问包装函数内部的任何东西。
+```javascript
+var a = 2;
+function foo(){
+ var a = 3;
+ console.log(a);   // 3
+}
+foo();
+console.log(a);    // 2
+```
+但是这样会增加额外的问题：首先，必须要声明一个具名函数foo()，这样foo()本身就“污染”了所在作用域；其次，必须显示地通过函数名(foo())调用这个函数才能运行其中的代码。 <br>
+改进：
+```javascript
+var a = 2;
+(function foo(){
+ var a = 3;
+ cosole.log(a);   // 3
+})();
+console.log(a);   // 2
+```
+(function foo(){...})()会被看成函数表达式而不是一个标准的函数声明来处理。 <br>
+> 第一个片段的foo被绑定在所在作用域中，可以直接通过foo()来调用；第二个片段中foo被绑定在函数表达式自身的函数中而不是所在作用域中。 <br>
+> 也就是说，(function foo(){...})()作为函数表达式意味着foo只能在...所代表的位置中能被访问，外部作用域则不行。
+###### foo变量名被隐藏在自身的函数中而不是在所在作用域中。
+
+###### 匿名函数
+匿名函数表达式，比较典型的就是回调函数：
+```javascript
+setTimeout(function(){
+ console.log("xxxx");
+},1000);
+```
+匿名函数表达式书写起来简洁快捷，但是存在几个缺点：
+* 匿名函数在栈追踪中不会显示出有意义的函数名，使得调试很困难
+* 如果没有函数名，当函数需要引用自身时只能用arguments.callee引用（已过期）
+* 匿名函数省略了对于代码可读性/可理解性很重要的函数名 <br>
+使用行内函数表达式能够解决这个问题,始终给函数表达式命名是一个最佳实践：
+```javascript
+setTimeout(function timeoutHandler(){
+ console.log("XXX");
+},1000);
+```
+###### 立即执行函数表达式
+IIFE：立即执行函数表达式：
+```javascript
+var a = 2;
+(function foo(){
+ var a = 3;
+ cosole.log(a);   // 3
+})();
+console.log(a);   // 2
+```
+函数被包含在一对()括号内部，因此成为了一个表达式，通过在末尾添加另一个()可以立即执行这个函数。 <br>
+IFEE有一个非常普遍的进阶用法——把它们当作函数调用并传递参数进去：
+```javascript
+var a = 2;
+(function IFEE(global){   // 可以从外部作用域传递任何我们需要的东西
+ var a = 3; 
+ console.log(a);   // 3
+ console.log(global.a);  // 2
+})(window);
+console.log(a);  // 2
+```
+IFEE还有一个用途就是倒置代码的运行顺序：将需要运行的函数放在第二位，在IFEE执行之后当作参数传递进去：
+```javascript
+var a = 2;
+// 函数表达式def定义在片段的第二部分，然后当作参数（这个参数也叫def）被传递进IFEE函数定义的第一部分
+// 最后参数def（也就是传递进去的函数）被调用，并将window传入当作global参数的值
+(function IFEE(def){
+ def(window);
+})(function def(global){
+ var a = 3;
+ console.log(a);    // 3
+ console.log(global.a);  // 2
+});
+```
+
+#### 块级作用域
+> 变量的声明应该距离使用的地方越近越好，并最大限度地本地化。 <br>
+
+块作用域是指变量和函数不仅可以属于所处的作用域，也可以属于某个代码块（通常是指{...}内部）。 <br>
+块级作用域是一个队最小授权原则进行扩展的工具，将代码从在函数中隐藏信息扩展为在块中隐藏信息。 <br>
+```javascript
+for(var i = 0; i<10;i++){        // 在for循环的头部直接定义变量i是为了i只在for循环内部的上下文中使用，但是由于i是var声明的，所以i会被绑定在外部作用域（函数或全局）中
+ console.log(i);
+}
+```
+更多关于块级作用域的解说，可以点击 [这里](https://github.com/HecateDK/LearningNotes/blob/master/ECMAScript6.md#let%E5%92%8Cconst)
+
+
+
+
+
+
+
 
 
 
