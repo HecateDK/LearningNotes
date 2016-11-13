@@ -57,12 +57,33 @@ console.log(a);        // 2——a被泄漏到全局作用域上了
 ###### 性能
 javascript引擎会在编译阶段进行数项性能优化，其中有些优化依赖于能够根据代码的词法进行静态分析，并预先确定所有变量和函数的定义位置，才能在执行过程中快速找到标识符。 <br>
 但是如果引擎在代码中发现了eval()/with，它只能简单地假设关于标识符位置的判断都是无效的，因为无法再词法分析阶段明确指定eval()会接收到什么代码，这些代码如何对作用域进行修改，也无法知道传递给with用来创建新词法作用域的对象内容到底是什么。 <br>
-如果出现了eval()/with，很肯能所有的优化都是无意义的。
+如果出现了eval()/with，很可能所有的优化都是无意义的。
 
 
 
+#### 函数作用域
+函数作用域是指：属于这个函数的全部变量都可以在整个函数的范围内使用及复用（事实上，在嵌套的作用域中也可以使用）。
+###### 定义一个函数
+```javascript
+// 函数声明——常用来定义全局作用域下的函数（全局函数）
+function maxinum(a,b){
+ if(a>b) return a;
+ else return b;
+}
+maxinum(5,6);   // 6
 
+// 函数表达式——常用来定义一个作为对象方法的函数
+var obj = new Object();
+obj.maxinum = function(a,b){
+ if(a>b) return a;
+ else return b;
+};
+obj.maxinum(5,6);   // 6
 
+// Function构造函数——没有很好的可读性，只在特定情况下使用
+var maxinum = new Function("a","b","if(a>b) return a;else return b;");
+maxinum(5,6);     // 6
+```
 
 
 
