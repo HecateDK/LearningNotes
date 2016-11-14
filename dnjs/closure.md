@@ -173,19 +173,146 @@ doSomething()和doAnother()函数具有涵盖模块实例内部作用域的闭�
  
 上一个实例代码中有一个叫作CoolModule()的独立模块创建器，可以被调用任意多次，每次调用都会创建一个新的模块实例。当只需要一个实例的时候，可以像如下代码那样对这个模式改进：
 ```javascript
-
+var foo = (function CoolModule(){    // 将模块函数转换成IIFE，立即调用这个函数并将返回值直接赋值给单例的模块实例标识符foo
+  var something = 'cool';
+  var another = [1,2,3];
+  function doSomthing(){
+    console.log(something);
+  }
+  function doAnother(){
+    console.log(another.join("!"));
+  }
+  return {
+    doSomething:doSomething,
+    doAnother:doAnother
+  };
+})();
+foo.doSomething();   // "cool"
+foo.doAnother();     // 1!2!3 
 ```
+模块也是普通的函数，所以可以接受参数：
+```javascript
+function CoolModule(id){
+  function identify(){
+    console.log(id);
+  }
+  return {
+    identify:identify
+  };
+}
+var foo1 = CoolModule("foo1");
+var foo2 = CoolModule("foo2");
+foo1.identify();   // "foo1"
+foo2.identify();   // "foo2"
+```
+###### 模块模式另一个强大的用法是命名将要作为公共API返回的对象：
+```javascript
+var foo = (function CoolModule(id){
+  function change(){
+    // 修改公共API
+    pubilcAPI.identify = identify2;
+  }
+  function identify1(){
+    console.log(id);
+  }
+  function identify2(){
+    console.log(id.toUpperCase());
+  }
+  var publicAPI = {
+    change:change,
+    identify:identify1
+  };
+  return publicAPI;
+}("foo module");
+foo.identify();     // foo module
+foo.change();
+foo.identify();      // FOO MODULE
+```
+通过在模块实例的内部保留对公共API对象的内部引用，可以从内部对模块实例进行修改，包括添加或者删除属性和方法，以及修改它们的值。
 
 
+###### 现在的模块机制
+大多数模块依赖加载器/管理器本质上都是将这个模块定义封装进一个友好API：
+```javascript
+var MyModules = (function Manager(){
+  var modules = {};
+  function define(name,deps,impl){
+    for(var i = 1; i <deps.length; i++ ){
+      deps[i] = modules[deps[i]];
+    }
+    modules[name] = impl.apply(impl,deps);
+  }
+  function get(name){
+    return modules[name];
+  }
+  return {
+    define:define,
+    get:get
+  }
+})();
+```
+下面展示如何使用它来定义模块：
+```javascript
+MyModules.define("bar",[],function(){
+  function hello(who){
+    return "Let me introduce:" + who;
+  }
+  return{
+    hello:hello
+  };
+});
+MyModules.define("foo",["bar"],function(bar)){   // "foo"和"bar"模块都是通过一个返回公共API的函数来定义的，"foo"甚至还接受"bar"的实例作为依赖参数，并能相应地使用它
+  var hungry = 'hippo';
+  function awesome(){
+    console.log( bar.hello( hungry ).toUpperCase() );
+  }
+  return{
+    awesome:awesoem
+  };
+});
+var bar = MyModules.get("bar");
+var foo = MyModules.get("foo");
+console.log(
+  bar.hello("hippo")
+);        // Let me introduce:hippo
+foo.awesome();   // LET ME INTRODUCE:HIPPO
+```
+它们符合模块模式的两个特点：调用包装了函数定义的包装函数，并且将返回值作为该模块的API。
+
+###### ES6中的模块机制
+在通过模块系统进行加载时，ES6会将文件当作独立的模块来处理。每个模块都可以导入其他模块或特定的API成员，同样也可以导出自己的API成员。 <br>
+ES6的模块没有“行内”格式，必须被定义在独立的文件中（一个文件一个模块）。浏览器或引擎有一个默认的“模块加载器”可以在导入模块的同时同步地加载模块文件。
+```javascript
+// bar.js
+function hello(who){
+  return "Let me introduce:" + who;
+}
+export hello;  // export:导出功能：公开在模块中声明的内容，并让其它模块加以使用
+
+// foo.js
+// 仅从"bar"模块导入hello()
+import hello from "bar";
+var hungry = "hippo";
+function awesome(){
+    console.log( bar.hello( hungry ).toUpperCase() );
+}
+export awesome;
+
+// baz.js
+// 导入完整的"foo"和"bar"模块
+module foo from "foo";
+module bar from "bar";
+console.log(
+  bar.hello("thino")
+);    // Let me introduce:thino
+foo.awesome();   //LET ME INTRODUCE:THINO
+```
+> import可以将一个模块中的一个或多个API导入到当前作用域中，并分别绑定在一个变量上；
+> module会将整个模块的API导入并绑定到一个变量上；
+> export会将当前模块的一个标识符（变量、函数）导出为公共API。 <br>
 
 
-
-
-
-
-
-
-
+模块文件中的内容会被当作好像包含在作用域闭包中一样来处理，就和前面介绍的函数闭包模块一样。
 
 
 
