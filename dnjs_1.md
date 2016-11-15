@@ -5,11 +5,11 @@
 
 
 #### this和对象原型
-* [this详解](#this详解)
-* [对象](#对象)
-* [混合对象“类”](#混合对象“类”)
-* [原型](#原型)
-* [行为委托](#行为委托)
+* [this详解](https://github.com/HecateDK/LearningNotes/blob/master/dnjs/this.md)
+* [对象](https://github.com/HecateDK/LearningNotes/blob/master/dnjs/object.md)
+* [混合对象“类”](https://github.com/HecateDK/LearningNotes/blob/master/dnjs/class.md)
+* [原型](https://github.com/HecateDK/LearningNotes/blob/master/dnjs/prototype.md)
+* [行为委托](https://github.com/HecateDK/LearningNotes/blob/master/dnjs/delegation .md )
 
 
 
