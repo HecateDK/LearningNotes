@@ -5,10 +5,8 @@
 ![](./views/40e161e7435e316b26ed0bf5dd5315e3.png)   <br> 
 <br> 
 <br> 
-设计师给的图是： ![](./views/echarts.jpg)
+设计师给的图是： ![](./views/echarts.jpg)   <br>
 
-
-参考官方实例，最像设计图的就是 ![](./views/echarts_1.jpg)   （或者点击[这里](http://echarts.baidu.com/demo.html#pie-doughnut) ） <br>
 
 但是可以看出设计图的每一项之间是有一定的空白间隔的，而且图例组件显示的数据不单纯只是data的数值，还有就是控制饼图的每一项位置是在饼图的右方。  <br>
 所以我们接下来就来对照ECharts [配置项手册](http://echarts.baidu.com/option.html#title) 来做出我们想要的饼图  <br>
