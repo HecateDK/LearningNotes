@@ -158,3 +158,4 @@ chart.setOption(option);
  			};
  			createChart(data);
 ```
+查看demo可以点击 [这里](http://jsbin.com/yamewidizo/edit?html,css,js,output)
