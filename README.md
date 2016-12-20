@@ -9,3 +9,4 @@
 * [你不知道的javascript（一）](https://github.com/HecateDK/LearningNotes/blob/master/dnjs_1.md)
 * [canvas画圆形百分比进度条](https://github.com/HecateDK/LearningNotes/blob/master/percentageBar.md)
 * [ECharts画圆使用小结](https://github.com/HecateDK/LearningNotes/blob/master/echarts_1.md)
+* [MUI滑块美化](https://github.com/HecateDK/LearningNotes/blob/master/range_1.md)
