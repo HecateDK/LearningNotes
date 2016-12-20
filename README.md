@@ -8,3 +8,4 @@
 * [ECMAScript6小记](https://github.com/HecateDK/LearningNotes/blob/master/ECMAScript6.md)
 * [你不知道的javascript（一）](https://github.com/HecateDK/LearningNotes/blob/master/dnjs_1.md)
 * [canvas画圆形百分比进度条](https://github.com/HecateDK/LearningNotes/blob/master/percentageBar.md)
+* [ECharts画圆使用小结](https://github.com/HecateDK/LearningNotes/blob/master/echarts_1.md)
