@@ -4,19 +4,19 @@
 用一张图来了解ECharts：   <br>
 ![](./views/40e161e7435e316b26ed0bf5dd5315e3.png)   <br> 
 <br> 
-
+<br> 
 设计师给的图是： ![](./views/echarts.jpg)
 
-只需要在html中添加如下代码：
-```javascript
-<div id="ECharts"></div>
-```
+
 参考官方实例，最像设计图的就是 ![](./views/echarts_1.jpg)   （或者点击[这里](http://echarts.baidu.com/demo.html#pie-doughnut) ） <br>
 
 但是可以看出设计图的每一项之间是有一定的空白间隔的，而且图例组件显示的数据不单纯只是data的数值，还有就是控制饼图的每一项位置是在饼图的右方。  <br>
 所以我们接下来就来对照ECharts [配置项手册](http://echarts.baidu.com/option.html#title) 来做出我们想要的饼图  <br>
 
-
+首先要在html中添加如下代码：
+```html
+<div id="ECharts"></div>
+```
 ##### 初始化echarts实例
 ```javascript
 var loanChart = document.getElementById("ECharts");
@@ -24,7 +24,7 @@ var loanChart = document.getElementById("ECharts");
 ##### 指定图表的配置项和数据
 
 ```javascript
-var createChart = function(data){
+  var createChart = function(data){
   var chart = echarts.init(loanChart);
   // 这里开始可以配置各项属性
   // 首先看一下  图形样式
@@ -52,10 +52,10 @@ var createChart = function(data){
 var option = {
     legend:{ 
         orient: 'vertical',
-				left: '60%',                // 图例组件离容器左侧的距离                  
-				top: '30%',                 // 图例组件离容器上侧的距离                    
-			  itemWidth: 8,              // 图例标记的图形宽度          
-				itemHeight: 8,
+    left: '60%',                // 图例组件离容器左侧的距离                  
+    top: '30%',                 // 图例组件离容器上侧的距离                    
+    itemWidth: 8,              // 图例标记的图形宽度          
+    itemHeight: 8,
     },
     series: [{  }]
 ```
@@ -85,7 +85,7 @@ chart.setOption(option);
 ```
 ###### 完整的js代码
 ```javascript
-      var data = { "total":80000.00,"month":12,"per":6936.16,"unit":8 };
+     		var data = { "total":80000.00,"month":12,"per":6936.16,"unit":8 };
  			
  			// 初始化echarts实例
  			var loanChart = document.getElementById("ECharts");
