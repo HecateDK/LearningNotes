@@ -52,10 +52,10 @@ var loanChart = document.getElementById("ECharts");
 var option = {
     legend:{ 
         orient: 'vertical',
-    left: '60%',                // 图例组件离容器左侧的距离                  
-    top: '30%',                 // 图例组件离容器上侧的距离                    
-    itemWidth: 8,              // 图例标记的图形宽度          
-    itemHeight: 8,
+        left: '60%',                // 图例组件离容器左侧的距离                  
+        top: '30%',                 // 图例组件离容器上侧的距离                    
+        itemWidth: 8,              // 图例标记的图形宽度          
+        itemHeight: 8,
     },
     series: [{  }]
 ```
