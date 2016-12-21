@@ -84,6 +84,11 @@ Q能够和 jQuery, Dojo, When.js, WinJS,等等混合使用。
 
 
 #### Tutorial
-
-
-
+Promise拥有`then`方法：可以用来获取程序返回的值——fulfillment，或者是捕获程序抛出的异常——rejection。   
+```javascript
+promiseMeSomething()
+.then(function (value) {
+}, function (reason) {
+});
+```
+如果`promiseMeSomething`函数返回一个promise对象是程序的返回值，那么第一个函数（the fulfillment handler）就会访问这个值。但是如果`promiseMeSomething`函数得到的是一个程序抛出的异常，那么第二个函数（the rejection handler）就会对这个异常进行相应处理。 <br>
