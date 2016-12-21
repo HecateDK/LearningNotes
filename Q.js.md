@@ -3,7 +3,7 @@
 * [Getting Start](#Getting Start)
 * [Resources](#Resources)
 * [Tutorial](#Tutorial)
-  * Propagation
+  * [Propagation](#Propagation)
   * Chaining
   * 组合
   * 序列
@@ -92,3 +92,8 @@ promiseMeSomething()
 });
 ```
 如果`promiseMeSomething`函数返回一个promise对象是程序的返回值，那么第一个函数（the fulfillment handler）就会访问这个值。但是如果`promiseMeSomething`函数得到的是一个程序抛出的异常，那么第二个函数（the rejection handler）就会对这个异常进行相应处理。 <br>
+
+需要注意的是：promise的解析是针对异步机制的。也就是说，成功或者失败处理程序将会在下一个事件循环中被调用（即Node中的`process.nextTick`）。这给我们在跟踪代码流的时候一个很好地保障。换句话说，`then`将总是在任何处理程序执行之前返回。   <br>
+在本教程中，我们将从如何使用、运用promise进行开发开始。我们将会讲解如何去创建它们，创建一个类似'promiseMeSomething'会返回一个promise对象的函数。
+
+##### Propagation
