@@ -1,9 +1,9 @@
 ### Q.js【译文】
 
-* [Getting Start](#Getting Start)
-* [Resources](#Resources)
-* [Tutorial](#Tutorial)
-  * [Propagation](#Propagation)
+* [Getting Start](#getting-start)
+* [Resources](#resources)
+* [Tutorial](#tutorial)
+  * [Propagation](#propagation)
   * Chaining
   * 组合
   * 序列
@@ -97,3 +97,14 @@ promiseMeSomething()
 在本教程中，我们将从如何使用、运用promise进行开发开始。我们将会讲解如何去创建它们，创建一个类似'promiseMeSomething'会返回一个promise对象的函数。
 
 ##### Propagation
+`then`方法返回一个promise对象，在下面的这个例子中，我们设为'outputPromise' 
+```javascript
+var outputPromise = getInputPromise()
+.then(function (input) {
+}, function (reason) {
+});
+```
+`outputPromise`变量将在程序结束前作为一个promise对象，返回一个值。此时函数只能返回一个值或者抛出一个异常。只有一个处理程序将会被调用，它将负责处理'outputPromise'。   
+* 
+* 
+* 
