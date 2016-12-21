@@ -105,6 +105,14 @@ var outputPromise = getInputPromise()
 });
 ```
 `outputPromise`变量将在程序结束前作为一个promise对象，返回一个值。此时函数只能返回一个值或者抛出一个异常。只有一个处理程序将会被调用，它将负责处理'outputPromise'。   
-* 
-* 
-* 
+* 如果处理程序返回的是一个值，'outputPromise'的状态就变成“成功(fulfilled)”
+* 如果程序抛出一个异常，'outputPromise'的状态就变成“失败(rejected)”
+* 如果在处理程序中返回了一个promise对象，'outputPromise'就会"变成"那个promise。能够成为一个新的promise对于管理延迟、组合结果，或者是恢复错误都是很有帮助的。 <br>
+
+如果`getInputPromise()`promise结果失败，并且你省略了对于rejection的处理程序，那么error就会返回到`outputPromise`：
+```javascript
+var outputPromise = getInputPromise()
+.then(function (value) {
+});
+```
+ 
