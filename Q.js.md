@@ -346,5 +346,45 @@ foo()
  ```
  
 ###### Using Deferreds
- 
- 
+如果你必须要用基于异步回调函数而不是基于promise，Q提供了一些简写方法（就像`Q.fcall`）。但是更多的时候，我们需要使用延迟去写解决方法。
+```javascript
+var deferred = Q.defer();
+FS.readFile("foo.txt","utf-8",function(error,text){
+ if(error){
+  deferred.reject(new Error(error));
+ }else{
+  deferred.resolve(text);
+ }
+});
+return deferred.promise;
+```
+注意：延迟可以使用一个值或是一个promise对象来解决。`reject`方法是处理失败状态的promise的一个简写。
+```javascript
+// this:
+deferred.reject(new Error("Can't do it"));
+
+// is shorthand for:
+var rejection = Q.fcall(function(){
+ thrown new Error("Can't do it");
+});
+deferred.resolve("rejection");
+```
+这是一个简化`Q.delay`的写法：
+```javascript
+function delay(ms){
+ var deferred = Q.defer();
+ setTimeout(deferred.resolve,ms);
+ return deferred.promise;
+}
+```
+这是一个简化`Q.timeout`的写法：
+```javascript
+function timeout(promise,ms){
+ var deferred = Q.defer();
+ Q.when(promise,deferred.resolve);
+ delay(ms).then(function(){
+  deferred.reject(new Error ("Timed out"));
+ });
+ return deferred.promise;
+}
+```
