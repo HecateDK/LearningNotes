@@ -115,4 +115,28 @@ var outputPromise = getInputPromise()
 .then(function (value) {
 });
 ```
+ 如果输入的promise得到一个成功的结果，但是你省略了对于fulfillment 的处理程序，那么得到的值就会返回到'outputPromise'：
+ ```javascript
+ var outputPromise = getInputPromise()
+ .then(null,function(error){
+ });
+ ```
+ 
+ 当你只关注于对程序抛出的异常的处理的时候，Q promise提供了一个`fail`方法，可以取代`then`。
+ ```javascript
+ var outputPromise = getInputPromise()
+ .fail(function(error){
+ });
+ ```
+如果你只为现代引擎编写JavaScript或者使用CoffeeScript，你就可以使用`catch`来替代`fail`。   <br>
+ 
+Promise 还有一个`fin`方法，类似于`finally`。当promise通过`getInputPromise()`在返回一个值或者抛出一个异常之前返回的时候，final处理程序就会在无参的情况下被调用。函数返回的值或是抛出的异常通过`getInputPromise()`直接传递到`outputPromise`，除非最终处理程序失败，也有可能会延迟，如果final程序返回一个promise。    <br>
+```javascript
+var outputPromise = getInputPromise()
+.fin(function(){
+ // close files, database connections, stop servers, conclude tests
+})
+```
+
+
  
