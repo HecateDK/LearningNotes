@@ -7,9 +7,9 @@
   * [Chaining](#chaining)
   * [Combination](#combination)
   * [Sequences](#sequences)
-  * 错误处理
-  * 进度通知
-  * 结束
+  * [Handling Errors](#handling-errors)
+  * [Progress Notification](#progress-notification)
+  * [The End](#the-end)
   * 开始
   * 中间
   * Over the Wire
@@ -233,4 +233,118 @@ Q.any(promise)
 ```
 
 ##### Sequences
+如果你有一些promise-producing函数需要顺序执行，你可以像一下例子那样：
+```javascript
+return foo(initialVal).then(bar).then(baz).then(qux); 
+```
+然而，如果你想运行一个动态构造的序列函数，你可以这样做：
+```javascript
+var funcs = [foo,bar,baz,qux];
+var result = Q(initialVal);
+funcs.forEach(function(f){
+ result = result.then(f);
+});
+return result;
+```
+通过使用`reduce`可以使此稍微更紧凑一点：
+```javascript
+return funcs.reduce(function (soFar,f){
+ return soFar.then(f);
+},Q(initialVal));
+```
+你可以使用更紧凑的写法：
+```javascript
+return funcs.reduce(Q.when,Q(initialVal));
+```
 
+#####　Handling Errors
+
+Promise有一个有时不直观的方面的，如果你在成功状态时候抛出一个异常，此异常将不会被失败状态的处理程序捕获。
+```javascript
+return foo()
+.then(function (value){
+ throw new Error("Can't bar.");
+},function(error){
+ // We only get here if "foo" fails
+});
+```
+为什么会这样呢？考虑一下promise之间的平行关系和`try`/`catch`。我们尝试去执行`foo()`：错误处理程序类似于`foo()`里的`catch`，而成功处理程序表示在`try`/`catch`之后的代码块。此时，代码需要自身的`try`/`catch`代码块。   <br>
+
+对于promise而言，这意味着链接在你的失败处理程序里：
+```javascript
+return foo()
+.then(function (value) {
+    throw new Error("Can't bar.");
+})
+.fail(function (error) {
+    // We get here with either foo's error or bar's error
+});
+```
+
+##### Progress Notification
+让promise时刻反馈他们的进度是有可能的，例如：上传文件所需时间较长时。不是所有的promise对象都有进度反馈，但是对于那些需要知道其进度的，你可以传递第三个参数给`then`来对进度情况作操作：
+```javascript
+return uploadFile()
+.then(function(){
+ // Success uploading the file
+}.function(err){
+ // There was an error,and we get the reason for error
+},function(progress){
+ // We get notified of the upload's progress as it is executed 
+});
+```
+就像`fail`，Q提供了进度回调的缩写`progress`：
+```javascript
+return uploadFile().progress(function(progress){
+ // We get notified of the upload's progress
+});
+```
+
+##### The End
+当一条promise链快结束的时候，此时你要么返回最后一个promise，要么结束promise链。因为失败处理程序可以捕获异常，这是一个不好的模式，因为异常的去处不能被观察。   <br>
+所以，要么返回它：
+```javascript
+return foo()
+ .then(function(){
+  return "bar";
+ });
+```
+要么结束它：
+```javascript
+foo()
+.then(function(){
+ return "bar";
+})
+.done();
+```
+结束一个promise链能够确保：如果一个错误没有在结束之前被失败处理程序捕获，它就会被重新载入并且报告。  <br>
+ 我们正在探索如果去使得一个未处理的错误可见而无任何明确的处理。
+ 
+ ##### The Beginning
+ 
+ 上面的所有假设，你已经从某处得到一个promise，这是一种很常见的情况。每隔一段时间，你需要从头开始创建一个promise。
+ 
+ ###### Using `Q.fcall`
+ 
+ promise可以来自于一个使用`Q.fcall`的值，下面的例子返回一个IO promise：
+ ```javascript
+ return Q.fcall(function(){
+  return 10;
+ });
+ ```
+ 
+ 你也可以使用`fcall`创建一个带有异常的promise：
+ ```javascript
+ return Q.fcall(function(){
+  throw new Error("Can't do it");
+ });
+ ```
+ 
+ 顾名思义，`fcall`能称为一个函数，也能是一个promise方法。可以使用`eventualAdd`方法去添加两个数字：
+ ```javascript
+ return Q.fcall(eventualAdd,2,2);
+ ```
+ 
+ ###### Using Deferreds
+ 
+ 
