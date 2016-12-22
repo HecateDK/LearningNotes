@@ -320,11 +320,11 @@ foo()
 结束一个promise链能够确保：如果一个错误没有在结束之前被失败处理程序捕获，它就会被重新载入并且报告。  <br>
  我们正在探索如果去使得一个未处理的错误可见而无任何明确的处理。
  
- ##### The Beginning
- 
+
+##### The Beginning
  上面的所有假设，你已经从某处得到一个promise，这是一种很常见的情况。每隔一段时间，你需要从头开始创建一个promise。
  
- ###### Using `Q.fcall`
+###### Using `Q.fcall`
  
  promise可以来自于一个使用`Q.fcall`的值，下面的例子返回一个IO promise：
  ```javascript
@@ -345,6 +345,6 @@ foo()
  return Q.fcall(eventualAdd,2,2);
  ```
  
- ###### Using Deferreds
+###### Using Deferreds
  
  
