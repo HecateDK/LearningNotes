@@ -6,7 +6,7 @@
   * [Propagation](#propagation)
   * [Chaining](#chaining)
   * [Combination](#combination)
-  * [Sequences](sequences)
+  * [Sequences](#sequences)
   * 错误处理
   * 进度通知
   * 结束
