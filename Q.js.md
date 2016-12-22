@@ -4,8 +4,8 @@
 * [Resources](#resources)
 * [Tutorial](#tutorial)
   * [Propagation](#propagation)
-  * Chaining
-  * 组合
+  * [Chaining](#chaining)
+  * Combination(#combination)
   * 序列
   * 错误处理
   * 进度通知
@@ -137,6 +137,81 @@ var outputPromise = getInputPromise()
  // close files, database connections, stop servers, conclude tests
 })
 ```
+* 如果程序返回的是一个值，那么这个值就会被忽略
+* 如果程序抛出了一个异常，那么这个异常就会被传递到`outputPromise`
+* 如果程序返回一个promise对象，`outputPromise `就会被延迟。最终返回的值或是抛出的异常具有和立即返回值或是抛出异常相同的作用：返回的值就会被忽略，抛出的异常就会被传递。   <br>
 
+如果你只为现代引擎编写JavaScript或者使用CoffeeScript，你就可以使用`finally`来替代`fin`。   <br>
 
+##### Chaining
+Promise的链有两种形式，可以通过内部或者外部处理程序，下面两个例子是等价的。
+```javascript
+return getUsername()
+.then(function(username){
+ return getUser(username)
+ .then(function(user){
+  // if we get here without an error,the value returned here
+  // or the exception thrown here,resolves the promise returned by the first line  
+ })
+});
+```
+```javascript
+return getUsername()
+.then(function(username){
+ return getUser(username);
+})
+.then(function(user){
+  // if we get here without an error,the value returned here
+  // or the exception thrown here,resolves the promise returned by the first line  
+});
+```
+可以看出唯一的区别就是嵌套的不同。如果你需要在闭包中捕获多个输入值，嵌套处理程序是非常有利于开发的。  <br>
+```javascript
+function authenticate(){
+ return getUsername()
+ .then(function(username){
+  return getUser(username);
+ })
+ // chained because we will not need the user name in the next event
+ .then(function(user){
+  return getPassword()
+   // nested because we need both user and password next
+    .then(function(password){
+     if(user.passwordHash !== hash(password)){
+      throw new Error ("Can't authenticate");
+     }
+    });
+ });
+}
+```
+##### Combination
+你可以将一个promise数组整合成一个整体的promise。成功时候的数组可以用`all`。
+```javascript
+return Q.all({
+ eventualAdd(2,2),
+ eventualAdd(10,20)
+});
+```
+如果你有一个数组的promise，你可以使用`spread`替代'then'。`spread`方法会把成功处理程序返回的参数给“分开”。失败处理程序会访问第一个失败的信号。无论哪一个接收promise失败的函数都会首先由失败处理程序处理。   
+```javascript
+function eventualAdd(a,b){
+ return Q.spread([a,b],function(a,b){
+  return a + b;
+ })
+}
+```
+不过`spread`最开始是`all`的一种，所以你可以跳过它的链。
+```javascript
+return getUsername()
+ .then(function (username){
+  return [username,getUser(username)];
+ })
+ .spread(function(username,user){
+ });
+```
+`all`方法返回一个数组的promise，当Promise的状态是成功的时候，在原始的promise中，这些数组会按照这些promise的顺序包含成功状态返回的值。如果其中一个给定的promise的状态为失败，那么返回的那个promise就会立即被拒绝，不必等待剩余的批次。如果你想要等到所有的promise确定其状态为成功或者失败，那么你可以使用`allSettled`。
+```javascript
+Q.allSettled(promise){
  
+}
+```
