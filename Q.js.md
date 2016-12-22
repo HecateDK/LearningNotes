@@ -5,8 +5,8 @@
 * [Tutorial](#tutorial)
   * [Propagation](#propagation)
   * [Chaining](#chaining)
-  * Combination(#combination)
-  * 序列
+  * [Combination](#combination)
+  * [Sequences](sequences)
   * 错误处理
   * 进度通知
   * 结束
@@ -211,7 +211,26 @@ return getUsername()
 ```
 `all`方法返回一个数组的promise，当Promise的状态是成功的时候，在原始的promise中，这些数组会按照这些promise的顺序包含成功状态返回的值。如果其中一个给定的promise的状态为失败，那么返回的那个promise就会立即被拒绝，不必等待剩余的批次。如果你想要等到所有的promise确定其状态为成功或者失败，那么你可以使用`allSettled`。
 ```javascript
-Q.allSettled(promise){
- 
-}
+Q.allSettled(promise)
+ .then(function(results){
+  results.forEach(function(result){
+   if( result.state === 'fulfilled' ){
+    var value = result.value;
+   }else{
+     var reson = result.reason;
+   }
+  })
+ })
 ```
+`any`方法接受一个promise数组，并返回一个promise的状态是成功（第一个给定的promise的状态为成功）或是失败（所有给定的promise的状态都为失败）。
+```javascript
+Q.any(promise)
+.then(function (first){
+ // Any of the promise was fulfilled
+},function(error){
+ // All of the promise were rejected
+})
+```
+
+##### Sequences
+
