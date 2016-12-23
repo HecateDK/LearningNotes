@@ -10,9 +10,9 @@
   * [Handling Errors](#handling-errors)
   * [Progress Notification](#progress-notification)
   * [The End](#the-end)
-  * 开始
-  * 中间
-  * Over the Wire
+  * [The Beginning](#the-beginning)
+  * [The Middle](#the-middle)
+  * [Over the Wire](#over-the-wrie)
   * 适配Node
   * 跟踪长堆栈
 *  测试
@@ -436,4 +436,69 @@ requestOkText("http://localhost:3000")
 ```
 
 ###### Using `Q.promise`
+这是一个类似deferred概念的替代promise-creation API，但没有引入另一个概念实体。   <br>
+下面用`Q.promise`方法写一个`requestOkText`：
+```javascript
+function requestOkText(url){
+ return Q.promise(function (resolve,reject,notify){
+  var request = new XMLHttpRequest();
+        request.open("GET", url, true);
+        request.onload = onload;
+        request.onerror = onerror;
+        request.onprogress = onprogress;
+        request.send();
 
+        function onload() {
+            if (request.status === 200) {
+                resolve(request.responseText);
+            } else {
+                reject(new Error("Status code was " + request.status));
+            }
+        }
+
+        function onerror() {
+            reject(new Error("Can't XHR " + JSON.stringify(url)));
+        }
+
+        function onprogress(event) {
+            notify(event.loaded / event.total);
+        }
+    });
+}
+```
+如果`requestOkText`抛出了一个异常，返回的promise状态为失败，抛出的异常则为其异常原因。
+
+##### The Middle
+如果你正在使用一个会返回一个promise的函数，可能只需要返回一个值并且不需要延迟，你可以使用Q库里面的'static'。   <br>
+
+`when`静态等效于`then`：
+```javascript
+return Q.when(valueOrPromise,function(value){
+},function(error){
+});
+```
+在promise里，所有的其他方法都有相对应的静态类似物。    <br>
+下面的两段代码是等效的：
+```javascript
+return Q.all([a,b]);
+```
+```javascript
+return Q.fcall(function(){
+ return [a,b];
+})
+.all();
+```
+当使用其他库提供的promise时，你应该将其转换为Q promise。不是所有的库都保证其为Q，并且不一定会提供所有和Q一模一样的方法。很多库都只提供部分`then`方法。幸运的是，我们需要把它变成充满活力的Q promise。
+```javascript
+return Q($.ajax(...)
+ .then(function(){
+});
+```
+如果因为某些原因，你从你的库中获取到的promise不是一个Q promise，此时你应该使用Q函数包装它。你可以使用简写形式`Q.invoke` ：
+```javascript
+return Q.invoke($,'ajax',...)
+.then(function(){
+});
+```
+
+##### Over the Wrie
