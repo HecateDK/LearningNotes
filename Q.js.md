@@ -13,10 +13,10 @@
   * [The Beginning](#the-beginning)
   * [The Middle](#the-middle)
   * [Over the Wire](#over-the-wrie)
-  * 适配Node
-  * 跟踪长堆栈
-*  测试
-* 关于作者
+  * [Adapting Node](#adapting-node)
+  * [Long Stack Traces](#long-stack-traces)
+*  [Tests](#tests)
+* [License](#license)
 
 
 
@@ -567,6 +567,49 @@ return deferred.promise;
 Q提供了对“长堆栈跟踪”的可选支持，其中失败状态的原因所述的堆栈属性被重写为可以跟踪的异步跳转而不是第一个报错的地方。来看下面的例子：
 ```javascript
 function theDepthsOfMyProgram(){
- Q.delay(100).done()
+ Q.delay(100).done(function explode(){
+  throw new Error("boo!");
+ });
 }
+the DepthsOfMyProgram();
 ```
+通常会返回一个挺没用的长堆栈跟踪，就像：
+```javascript
+Error: boo!
+    at explode (/path/to/test.js:3:11)
+    at _fulfilled (/path/to/test.js:q:54)
+    at resolvedValue.promiseDispatch.done (/path/to/q.js:823:30)
+    at makePromise.promise.promiseDispatch (/path/to/q.js:496:13)
+    at pending (/path/to/q.js:397:39)
+    at process.startup.processNextTick.process._tickCallback (node.js:244:9)
+```
+但是如果你通过设置打开此功能：
+```javascript
+Q.longStackSupport = true;
+```
+上面的代码会返回一个很好的长堆栈跟踪反馈：
+```javascript
+Error: boo!
+    at explode (/path/to/test.js:3:11)
+From previous event:
+    at theDepthsOfMyProgram (/path/to/test.js:2:16)
+    at Object.<anonymous> (/path/to/test.js:7:1)
+```
+注意：你是如何看到函数在长堆栈跟踪中处罚异步操作的。这是非常有用的一个调bug的方法，否则你最终得到的只有第一行，
+还有一堆在操作开始的地方Q内部没有任何符号的东西。   <br>
+
+在 Node.js里，此功能能够通过`Q_DEBUG`环境变量来实现：
+```javascript
+Q_DEBUG=1 node server.js
+```
+这将在所有的Q实例中都支持长堆栈跟踪。   <br>
+这个功能带来了严重的性能和内存开销，但是，如果你正在大量使用promise，或者是需要把服务器分配给很多用户，你就应该关闭这个设置。不过如果是在开发中，开启它吧。
+
+##### Tests
+
+你可以在[浏览器](https://rawgit.com/kriskowal/q/v1/spec/q-spec.html)中查看Q测试套件的结果。
+
+##### License
+Copyright 2009–2016 Kristopher Michael Kowal and contributors
+MIT License (enclosed)
+ 
