@@ -502,3 +502,44 @@ return Q.invoke($,'ajax',...)
 ```
 
 ##### Over the Wrie
+
+Promise 可以作为另一个变量的代理，就算是一个远程的对象也是可以的。有很多方法可以帮助我们更容易地操作属性或者调用函数。所有的这些方法都返回promise对象，因此它们可以被链接在一起。
+
+```javascript
+direct manipulation         using a promise as a proxy
+--------------------------  -------------------------------
+value.foo                   promise.get("foo")
+value.foo = value           promise.put("foo", value)
+delete value.foo            promise.del("foo")
+value.foo(...args)          promise.post("foo", [args])
+value.foo(...args)          promise.invoke("foo", ...args)
+value(...args)              promise.fapply([args])
+value(...args)              promise.fcall(...args)
+```
+如果promise是一个远程对象的代理，你可以使用这些往返的方法，而不必使用`then`。采用远程对象promise的优势，可以查看[Q-Connection](https://github.com/kriskowal/q-connection) 。 <br>
+
+就算是在非远程对象上，这些方法可以作为特别简单的成功状态处理程序的简写形式。例如，可以使用：
+```javascript
+return Q.fcall(function(){
+ return [{foo:"bar"},{foo:"baz"}];
+})
+.then(function(value){
+ return value[0].foo;
+});
+```
+替代
+```javascript
+return Q.fcall(function(){
+ return [{foo:"bar"},{foo:"baz"}];
+})
+.get(0)
+.get("foo");
+```
+
+##### Adapting Node
+如果你正在使用Node.js的回调没事函数，并且回调函数的形式是`function(err,result)`,Q提供了一些有用的实用函数，用于它们之间进行转换。最直截了当的大概就是`Q.nfcall`和`Q.nfapply`（“Node里面的call/apply方法”）——Node风格的函数且返回一个promise对象。
+```javascript
+return Q.nfcall(FS.readFile,"foo.txt","utf-8");
+return Q.nfapply(FS.readFile,["foo.txt","utf-8"]);
+```
+
