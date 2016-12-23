@@ -10,10 +10,5 @@
 * [canvas画圆形百分比进度条](https://github.com/HecateDK/LearningNotes/blob/master/percentageBar.md)
 * [ECharts画圆使用小结](https://github.com/HecateDK/LearningNotes/blob/master/echarts_1.md)
 * [MUI滑块美化](https://github.com/HecateDK/LearningNotes/blob/master/range_1.md)
-
-
-
-
-
 * [Q.js【译文】](https://github.com/HecateDK/LearningNotes/blob/master/Q.js.md)
 * [你不知道的javascript：异步&性能【译文】](https://github.com/HecateDK/LearningNotes/blob/master/Tdnjs_1.md)
