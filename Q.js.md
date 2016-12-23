@@ -388,3 +388,52 @@ function timeout(promise,ms){
  return deferred.promise;
 }
 ```
+最后，你可以通过使用`deferred.notify`给promise发送一个进度情况报告。   <br>
+这是浏览器里的一个XML HTTP请求包装器。当然，只有在实践中才能更彻底地[实施](https://github.com/montagejs/mr/blob/71e8df99bb4f0584985accd6f2801ef3015b9763/browser.js#L29-L73)它。   <br>
+
+```javascript
+function requestOkText(url){
+ var request = new XMLHttpRequest();
+ var deferred = Q.defer();
+ 
+ request.open('Get',url,true);
+ request.onload = onload;
+ request.onerror = onerror;
+ request.onprogress = onprogress;
+ request.send();
+ 
+ function onload(){
+  if(request.status === 200){
+   deferred.resolve(request.responText);
+  }else{
+   deferred.reject(new Error("Status code was" + request.status));
+  }
+ }
+ 
+ function onerror(){
+  deferred.reject(new Error("Can't XHR" + JSON.stringify(url)));
+ }
+ 
+ function onprogress(event){
+  deferred.notify(event.loaded / event.total);
+ }
+ return deferred.promise;
+}
+```
+下面是一个如何使用`requestOkText`方法的例子：
+```javascript
+requestOkText("http://localhost:3000")
+.then(function (responseText){
+ // If the HTTP response return 200 OK,log the response text
+ console.log(responseText);
+},function(error){
+ // If there's an error or a non-200 status code,log the error
+ console.log(error);
+},function(progress){
+ // Log the progress as it comes in
+ console.log("Request progress:" + Math.round(progress * 100) + "%");
+});
+```
+
+###### Using `Q.promise`
+
