@@ -542,4 +542,31 @@ return Q.fcall(function(){
 return Q.nfcall(FS.readFile,"foo.txt","utf-8");
 return Q.nfapply(FS.readFile,["foo.txt","utf-8"]);
 ```
+如果你正在使用方法而不是一个简单的功能实现，你能够很容易实际使用它在一个函数中传递一个方法到另一个函数——就像`Q.nfcall`——从方法的所有者中“解除绑定”。为了避免这种情况，你可以使用`Function.prototype.bind`或是一个由我们提供的简写形式：
+```javascript
+return Q.ninvoke(redisClient,"get","user:1:id");
+return Q.npost(redisClient,"get",["user:1:id"]);
+```
+你也可以通过`Q.denodeify`或`Q.nbind`来包装一个可以重复使用的函数：
+```javascript
+var readFile = Q.denodeify(FS.readFile);
+return readFile("foo.txt","utf-8");
 
+var redisClientGet = Q.nbind(redisClient.get,redisClient);
+return redisClientGet("user:1:id");
+```
+最后，如果你正在使用一个原始延迟对象，可以使用`makeNodeResolver`方法来更有效地处理延迟问题：
+```javascript
+var deferred = Q.defer();
+FS.readFile("foo.txt","utf-8",deferred.makeNodeResolver());
+return deferred.promise;
+```
+
+##### Long Stack Traces
+
+Q提供了对“长堆栈跟踪”的可选支持，其中失败状态的原因所述的堆栈属性被重写为可以跟踪的异步跳转而不是第一个报错的地方。来看下面的例子：
+```javascript
+function theDepthsOfMyProgram(){
+ Q.delay(100).done()
+}
+```
