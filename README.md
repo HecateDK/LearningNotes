@@ -11,3 +11,4 @@
 * [ECharts画圆使用小结](https://github.com/HecateDK/LearningNotes/issues/14)
 * [MUI滑块美化](https://github.com/HecateDK/LearningNotes/issues/15)
 * [Q.js【译文】](https://github.com/HecateDK/LearningNotes/issues/16)
+* [10个惊人的CSS和JavaScript动画logos例子](https://github.com/HecateDK/LearningNotes/issues/17)
